@@ -3,7 +3,6 @@ import { z } from "zod";
 
 import { LoginSchema } from "@/schemas/login";
 import { signIn } from "@/auth";
-import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { AuthError } from "next-auth";
 import { RegisterSchema } from "@/schemas/register";
 import { db } from "./db";
@@ -14,7 +13,10 @@ import { ThreadChildSchema, ThreadSchema } from "../schemas/thread";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export async function login(values: z.infer<typeof LoginSchema>) {
+export async function login(
+  values: z.infer<typeof LoginSchema>,
+  REDIRECT: string
+) {
   const validatedFields = LoginSchema.safeParse(values);
 
   if (!validatedFields.success) {
@@ -22,12 +24,11 @@ export async function login(values: z.infer<typeof LoginSchema>) {
   }
 
   const { email, password } = validatedFields.data;
-
   try {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: DEFAULT_LOGIN_REDIRECT,
+      redirectTo: REDIRECT,
     });
   } catch (error) {
     if (error instanceof AuthError) {
@@ -310,7 +311,6 @@ export async function like(threadId: string, userId: string) {
         userId,
       },
     });
-    console.log(threadLiked);
     if (threadLiked) {
       //unlike
       await db.likes.delete({

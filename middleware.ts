@@ -14,7 +14,14 @@ export default auth((req) => {
   const { nextUrl } = req;
 
   const isLoggedIn = !!req.auth;
-  const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
+  const isPublicRoute = publicRoutes.some((p) => {
+    if (p.includes("*")) {
+      const regex = nextUrl.pathname.match(/\/thread\/[\s\S]*?(?=\/|$)/g);
+      if (!regex) return false;
+      return nextUrl.pathname === regex[0];
+    }
+    return p === nextUrl.pathname;
+  });
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
   const isApiRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   if (isApiRoute) {

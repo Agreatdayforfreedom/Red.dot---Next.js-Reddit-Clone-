@@ -84,6 +84,7 @@ export default function ThreadForm({
     });
   };
 
+  if (!user) return null;
   return (
     <Form {...form}>
       <form

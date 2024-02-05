@@ -18,6 +18,8 @@ import useCurrentUser from "@/hooks/useCurrentUser";
 import { like } from "../../lib/actions";
 import Heart from "../heart";
 import React from "react";
+import LoginModal from "../auth/login-modal";
+import { usePathname } from "next/navigation";
 
 interface Props {
   onReply?: (type: any) => void;
@@ -35,29 +37,37 @@ export default function ThreadActions({
   onReply,
 }: Props) {
   const [clicked, setClicked] = React.useState(false);
-
+  const [modal, setModal] = React.useState(false);
   const user = useCurrentUser();
 
+  const pathname = usePathname();
+
   const onClickHeart = () => {
-    thread.liked === false && setClicked(true);
-    user?.id && like(thread.id, user.id);
-    setTimeout(() => {
-      setClicked(false);
-    }, 1600);
+    if (user) {
+      thread.liked === false && setClicked(true);
+      user?.id && like(thread.id, user.id);
+      setTimeout(() => {
+        setClicked(false);
+      }, 1600);
+    } else {
+      console.log("YOU ARE NOT AUTHENTICATED");
+      setModal(true);
+    }
   };
 
   const onClick = (type: any) => {
     if (user && onReply) {
       onReply(type);
     } else {
+      console.log("YOU ARE NOT AUTHENTICATED");
+      setModal(true);
       //parallel login route
     }
   };
-  if (thread.id == "1") {
-    console.log(thread);
-  }
+
   return (
     <div className="flex space-x-1">
+      <LoginModal open={modal} REDIRECT={pathname} />
       {/* <button
         className="mx-1 flex items-center space-x-1"
         onClick={() => user?.id && like(thread.id, user.id)}

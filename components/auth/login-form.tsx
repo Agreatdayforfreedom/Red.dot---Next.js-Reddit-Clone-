@@ -20,7 +20,7 @@ import { useState, useTransition } from "react";
 import CardWrapper from "@/components/auth/card-wrapper";
 import AlertCard from "@/components/alert-card";
 
-const LoginForm = () => {
+const LoginForm = ({ REDIRECT = "/" }: { REDIRECT?: string }) => {
   const [error, setError] = useState<string>("");
   const [isPending, startTransition] = useTransition();
 
@@ -35,7 +35,7 @@ const LoginForm = () => {
   function onSubmit(values: z.infer<typeof LoginSchema>) {
     setError("");
     startTransition(() => {
-      login(values).then((data) => {
+      login(values, REDIRECT).then((data) => {
         if (data?.error) {
           setError(data.error);
         }
