@@ -108,7 +108,6 @@ export async function newSubThread(
   revalidate: string
 ) {
   const validatedFields = ThreadChildSchema.safeParse(values);
-  console.log(validatedFields);
   if (!validatedFields.success) {
     return { message: "Something went wrong!" };
   }
@@ -255,7 +254,6 @@ export async function updatePost(
   userId: string
 ) {
   const validatedFields = ThreadSchema.required({ id: true }).safeParse(values);
-  console.log(validatedFields);
 
   if (!validatedFields.success) {
     return { message: "Invalid fields" };

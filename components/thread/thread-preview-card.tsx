@@ -18,7 +18,6 @@ interface Props {
 
 export default function ThreadPreviewCard({ thread }: Props) {
   const router = useRouter();
-  // {`/thread/${thread.id}`}
   function onNavigate() {
     if (window.getSelection()?.toString()) return; // prevent navigation when select text
     router.push(`/thread/${thread.id}`);
@@ -26,7 +25,7 @@ export default function ThreadPreviewCard({ thread }: Props) {
 
   return (
     <Card
-      className="hover:border-black hover:cursor-pointer w-4/5 mx-auto"
+      className="hover:border-black my-5 hover:cursor-pointer w-11/12 mx-auto rounded"
       onClick={onNavigate}
     >
       <CardHeader className="break-all">

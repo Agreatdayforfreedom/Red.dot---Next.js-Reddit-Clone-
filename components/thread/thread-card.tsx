@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import ThreadActions from "@/components/thread/thread-actions";
 import ThreadHeader from "./thread-header";
 import { User } from "@prisma/client";
+import useCurrentUser from "../../hooks/useCurrentUser";
 
 export type ClassName = {
   card: string;
@@ -23,7 +24,7 @@ interface Props {
   thread: Thread;
   className?: ClassName;
   isFirstAncestor?: boolean;
-  user: User | undefined;
+  // user: User | undefined;
 }
 const defaultClassName: ClassName = {
   card: "",
@@ -33,7 +34,7 @@ const defaultClassName: ClassName = {
 export default function ThreadCard({
   thread,
   className = defaultClassName,
-  user,
+  // user,
   isFirstAncestor,
 }: Props) {
   return (
@@ -70,7 +71,7 @@ export default function ThreadCard({
         )}
       </CardContent>
       <CardFooter className="pb-2">
-        <ThreadActions isFirstAncestor thread={thread} userId={user?.id} />
+        <ThreadActions isFirstAncestor thread={thread} />
       </CardFooter>
     </Card>
   );

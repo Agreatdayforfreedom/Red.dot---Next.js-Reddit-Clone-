@@ -18,10 +18,10 @@ import * as z from "zod";
 import { newSubThread, updateSubThread } from "@/lib/actions";
 import { usePathname } from "next/navigation";
 import Loader from "@/components/loader";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 interface Props {
   threadId: string;
-  userId: string;
   label?: string;
   openable?: boolean;
   content?: string;
@@ -33,11 +33,12 @@ export default function ThreadForm({
   content,
   label,
   openable = false,
-  userId,
   onReply,
 }: Props) {
   const [isPending, startTransition] = useTransition();
   const pathname = usePathname();
+
+  const user = useCurrentUser();
   const form = useForm<Pick<z.infer<typeof ThreadChildSchema>, "content">>({
     resolver: zodResolver(
       ThreadChildSchema.required({ content: true }).partial()
@@ -49,35 +50,35 @@ export default function ThreadForm({
   let text: string = content ? "Update" : "Reply";
 
   const onSubmit = (values: { content: string }) => {
-    console.log(values);
     startTransition(async () => {
-      if (content) {
-        //! UPDATE
+      if (user?.id)
+        if (content) {
+          //! UPDATE
 
-        if (values.content === content) {
-          return console.log("lol change the content");
+          if (values.content === content) {
+            return console.log("lol change the content");
+          }
+          await updateSubThread(
+            {
+              title: null,
+              content: values.content,
+              id: threadId,
+            },
+            user.id,
+            pathname
+          );
+        } else {
+          //! CREATE
+          await newSubThread(
+            {
+              title: null,
+              content: values.content,
+              parent_id: threadId,
+            },
+            user.id,
+            pathname
+          );
         }
-        await updateSubThread(
-          {
-            title: null,
-            content: values.content,
-            id: threadId,
-          },
-          userId,
-          pathname
-        );
-      } else {
-        //! CREATE
-        await newSubThread(
-          {
-            title: null,
-            content: values.content,
-            parent_id: threadId,
-          },
-          userId,
-          pathname
-        );
-      }
       form.reset();
       if (onReply) onReply();
     });

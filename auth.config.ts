@@ -15,7 +15,6 @@ export default {
         const { email, password } = validateFields.data;
         const user = db.user.findUnique({ where: { email } });
         if (user) {
-          console.log(user);
           return user;
         }
 

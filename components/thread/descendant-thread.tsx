@@ -3,20 +3,21 @@ import DescendantCard from "@/components/thread/descendant-card";
 import { User } from "@prisma/client";
 interface Props {
   thread: NestedThread[];
-  user: User | undefined;
 }
-export default function DescendantThread({ thread, user }: Props) {
+export default function DescendantThread({ thread }: Props) {
+  if (thread.length === 0) {
+    return;
+  }
+
   return (
-    // <div className="bg-white">
     <>
       {thread.map((t) => {
         return (
           <div className="relative" key={t.id}>
-            <DescendantCard thread={t} user={user} />
+            <DescendantCard thread={t} />
           </div>
         );
       })}
     </>
-    // </div>
   );
 }

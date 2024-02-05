@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BiExpandVertical } from "react-icons/bi";
 
 import DescendantThread from "@/components/thread/descendant-thread";
@@ -10,16 +10,25 @@ import ThreadHeader from "@/components/thread/thread-header";
 import { Card } from "@/components/ui/card";
 import ThreadActions from "@/components/thread/thread-actions";
 import ThreadForm from "@/components/thread/thread-form";
+import { useParams, usePathname } from "next/navigation";
 
 interface Props {
   thread: NestedThread;
-  user: any;
 }
 
-export default function DescendantCard({ thread, user }: Props) {
+export default function DescendantCard({ thread }: Props) {
   const [collapse, setCollapse] = useState(false);
   const [openReply, setOpenReply] = useState(false);
+
   const [type, setType] = useState<"UPDATE" | "CREATE">("CREATE");
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (ref.current && ref.current?.id === window.location.hash.slice(1)) {
+      ref.current.style.background = "rgba(71, 58, 58, 0.2)";
+      ref.current.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+  }, [ref]);
+
   //TODO:
   function reply(type?: "UPDATE" | "CREATE") {
     if (type) setType(type);
@@ -27,9 +36,9 @@ export default function DescendantCard({ thread, user }: Props) {
   }
 
   return (
-    <Card className=" my-1 p-0 border-none shadow-none">
+    <Card className="my-1 p-0 border-none shadow-none">
       <div style={{ paddingLeft: `${24}px` }}>
-        <div className="share">
+        <div className="mr-2" id={thread.id} ref={ref}>
           {!collapse && <ThreadLine onCollapse={() => setCollapse(true)} />}
           <div className="flex items-center ">
             {collapse && (
@@ -61,10 +70,9 @@ export default function DescendantCard({ thread, user }: Props) {
               ) : (
                 <p className="break-all text-sm p-2">{thread.content}</p>
               )}
-              <ThreadActions userId={user.id} thread={thread} onReply={reply} />
+              <ThreadActions thread={thread} onReply={reply} />
               {openReply && (
                 <ThreadForm
-                  userId={user.id}
                   threadId={thread.id}
                   content={type === "UPDATE" ? thread.content : ""}
                   onReply={reply} //close when create
@@ -75,11 +83,7 @@ export default function DescendantCard({ thread, user }: Props) {
           )}
         </div>
         {!collapse && (
-          <DescendantThread
-            user={user}
-            thread={thread.children}
-            key={thread.id}
-          />
+          <DescendantThread thread={thread.children} key={thread.id} />
         )}
       </div>
     </Card>

@@ -1,10 +1,8 @@
 "use client";
 import { FaRegHeart } from "react-icons/fa";
 import { BiMessage } from "react-icons/bi";
-import { IoIosShareAlt } from "react-icons/io";
 import { MdOutlineSaveAlt } from "react-icons/md";
 import { BsThreeDots } from "react-icons/bs";
-import { LuPencil } from "react-icons/lu";
 
 import { Button } from "@/components/ui/button";
 import { Thread } from "@/types";
@@ -14,11 +12,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import ThreadUpdateButtom from "./thread-update-button";
+import ThreadUpdateButtom from "@/components/thread/thread-update-button";
+import ShareButton from "@/components/thread/share-button";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 interface Props {
   onReply?: (type: any) => void;
-  userId?: string | undefined;
+  // userId?: string | undefined;
   thread: Thread;
   isFirstAncestor?: boolean;
   preview?: boolean;
@@ -26,13 +26,15 @@ interface Props {
 
 export default function ThreadActions({
   thread,
-  userId,
+  // userId,
   isFirstAncestor = false,
   preview = false,
   onReply,
 }: Props) {
+  const user = useCurrentUser();
+
   const onClick = (type: any) => {
-    if (userId && onReply) {
+    if (user && onReply) {
       onReply(type);
     } else {
       //parallel login route
@@ -59,10 +61,7 @@ export default function ThreadActions({
           <span>Reply</span>
         </Button>
       )}
-      <Button variant={"link"} className="space-x-1 p-1">
-        <IoIosShareAlt size={18} className="mt-1" />
-        <span>Share</span>
-      </Button>
+      <ShareButton currentId={thread.id} />
       {!preview && (
         <Popover>
           <PopoverTrigger>
@@ -72,14 +71,14 @@ export default function ThreadActions({
             <Button variant={"link"} className="mx-1 p-1 space-x-1">
               <MdOutlineSaveAlt /> <span>Save</span>
             </Button>
-            {userId && userId === thread.user.id && !thread.deleted && (
+            {user?.id === thread.user.id && !thread.deleted && (
               <>
                 <ThreadUpdateButtom
                   isFirstAncestor={isFirstAncestor}
                   threadId={thread.id}
                   onClick={() => onClick("UPDATE")}
                 />
-                <ThreadDeleteButton userId={userId} id={thread.id} />
+                <ThreadDeleteButton id={thread.id} />
               </>
             )}
           </PopoverContent>

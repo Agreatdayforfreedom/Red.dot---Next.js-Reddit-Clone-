@@ -6,18 +6,21 @@ import ThreadPreviewCard from "@/components/thread/thread-preview-card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import HeaderMainPage from "@/components/header-main-page";
+import { SessionProvider } from "next-auth/react";
 // import { Thread } from "@prisma/client";
 
 export default async function Home() {
   const threads: Thread[] = await getNullThreads();
   return (
-    <main className="h-full">
-      <HeaderMainPage />
-      <section className="w-4/5 mx-auto py-5 bg-slate-100 ">
-        {threads.map((thread: Thread) => (
-          <ThreadPreviewCard thread={thread} key={thread.id} />
-        ))}
-      </section>
-    </main>
+    <div className=" bg-slate-100">
+      <SessionProvider>
+        <HeaderMainPage />
+        <section className=" h-full w-4/5 mx-auto py-5 ">
+          {threads.map((thread: Thread) => (
+            <ThreadPreviewCard thread={thread} key={thread.id} />
+          ))}
+        </section>
+      </SessionProvider>
+    </div>
   );
 }

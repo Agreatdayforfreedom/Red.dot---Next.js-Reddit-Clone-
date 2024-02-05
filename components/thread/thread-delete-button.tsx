@@ -4,19 +4,17 @@ import { usePathname } from "next/navigation";
 import { deleteThread } from "@/lib/actions";
 import { Button } from "../ui/button";
 import { useTransition } from "react";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
-export default function ThreadDeleteButton({
-  userId,
-  id,
-}: {
-  userId: string;
-  id: string;
-}) {
+export default function ThreadDeleteButton({ id }: { id: string }) {
   const [isPending, startTransition] = useTransition();
   const pathname = usePathname();
+  const user = useCurrentUser();
   const onClick = () => {
     startTransition(async () => {
-      await deleteThread(userId, id, pathname);
+      if (user?.id) {
+        await deleteThread(user.id, id, pathname);
+      }
     });
   };
   return (

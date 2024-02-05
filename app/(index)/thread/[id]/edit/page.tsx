@@ -11,12 +11,12 @@ export default async function Page({ params }: { params: { id: string } }) {
     return redirect("/");
   }
   return (
-    <main className="h-full w-full flex flex-col items-center">
+    <div className="h-full w-full flex flex-col items-center">
       <div className="w-full text-start mt-2 my-5 p-10">
         <h2 className="font-bold text-2xl text-slate-600">Update Post</h2>
       </div>
 
       <FormNewPost userId={session?.user?.id!} thread={thread as any} />
-    </main>
+    </div>
   );
 }

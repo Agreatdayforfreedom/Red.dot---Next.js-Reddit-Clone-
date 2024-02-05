@@ -1,6 +1,6 @@
 import React from "react";
 import { signOut } from "@/auth";
-import Nav from "@/components/nav";
+import Header from "@/components/header";
 
 interface Props {
   children: React.ReactNode;
@@ -9,8 +9,8 @@ interface Props {
 export default function Layout({ children }: Props) {
   return (
     <>
-      <Nav />
-      {children}
+      <Header />
+      <main className="mt-12">{children}</main>
     </>
   );
 }
