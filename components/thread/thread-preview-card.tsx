@@ -37,7 +37,7 @@ export default function ThreadPreviewCard({ thread }: Props) {
       </CardHeader>
       <CardContent className="transparent-gradient">
         <p className="pl-4 pt-1 text-sm text-slate-800 max-h-[250px] overflow-hidden z-10">
-          {thread.content.repeat(100).toLowerCase()}
+          {thread.content}
         </p>
       </CardContent>
       <CardFooter>

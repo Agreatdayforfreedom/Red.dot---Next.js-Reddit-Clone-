@@ -8,9 +8,11 @@ import DescendantThread from "@/components/thread/descendant-thread";
 import { auth } from "@/auth";
 import ThreadForm from "@/components/thread/thread-form";
 import Test from "../../../../components/thread/test";
+import currentUser from "@/lib/currentUser";
 
 export default async function Page({ params }: any) {
-  const [thread] = await getThread(params.id);
+  const user = await currentUser();
+  const [thread] = await getThread(params.id, user?.id!);
   return (
     <div className=" flex bg-stone-900 min-h-screen justify-center">
       <section className="w-4/5 py-5 bg-white flex flex-col ">
@@ -23,7 +25,7 @@ export default async function Page({ params }: any) {
           <hr />
           <ThreadForm threadId={params.id as string} label="Reply" />
 
-          {!thread.children ? (
+          {thread.children === undefined ? (
             <div className="w-full  text-center">
               <p className="font-semibold text-2xl text-slate-700">
                 No comments yet

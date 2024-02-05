@@ -70,6 +70,7 @@ export async function getNullThreads() {
   return await db.thread.findMany({
     include: {
       user: true,
+      likes: true,
     },
     where: {
       parent_id: null,
@@ -81,7 +82,7 @@ export async function getNullThreads() {
  * get parent(parent_id = null) and its childs
  *
  */
-export async function getThread(id: string) {
+export async function getThread(id: string, userId: string) {
   // console.log(typeof id);
   const raw: RawThread[] = await db.$queryRaw`
     SELECT
@@ -94,10 +95,13 @@ export async function getThread(id: string) {
       t.created_at,
       t.updated,
       t.deleted,
-      COUNT(l.*) as totalLikes,
       u.id as user_id,
       u.image as user_image,
-      u.name as user_name
+      u.name as user_name,
+      COUNT(l.*) as totalLikes,
+      EXISTS(SELECT * FROM likes ll WHERE ll."threadId" = t.id AND ll."userId" = ${Prisma.raw(
+        `'${userId}'`
+      )}) AS liked
       FROM thread t 
       LEFT JOIN "user" AS u ON u.id = t."userId"
       LEFT JOIN likes AS l ON l."threadId" = t.id 
@@ -306,22 +310,22 @@ export async function like(threadId: string, userId: string) {
         userId,
       },
     });
-
+    console.log(threadLiked);
     if (threadLiked) {
       //unlike
-      return await db.likes.delete({
+      await db.likes.delete({
         where: {
           id: threadLiked.id,
         },
       });
+    } else {
+      await db.likes.create({
+        data: {
+          threadId,
+          userId,
+        },
+      });
     }
-
-    await db.likes.create({
-      data: {
-        threadId,
-        userId,
-      },
-    });
 
     revalidatePath(`/thread/${threadId}`);
   } catch (error) {

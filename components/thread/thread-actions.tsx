@@ -16,6 +16,8 @@ import ThreadUpdateButtom from "@/components/thread/thread-update-button";
 import ShareButton from "@/components/thread/share-button";
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { like } from "../../lib/actions";
+import Heart from "../heart";
+import React from "react";
 
 interface Props {
   onReply?: (type: any) => void;
@@ -32,7 +34,17 @@ export default function ThreadActions({
   preview = false,
   onReply,
 }: Props) {
+  const [clicked, setClicked] = React.useState(false);
+
   const user = useCurrentUser();
+
+  const onClickHeart = () => {
+    thread.liked === false && setClicked(true);
+    user?.id && like(thread.id, user.id);
+    setTimeout(() => {
+      setClicked(false);
+    }, 1600);
+  };
 
   const onClick = (type: any) => {
     if (user && onReply) {
@@ -41,17 +53,26 @@ export default function ThreadActions({
       //parallel login route
     }
   };
+  if (thread.id == "1") {
+    console.log(thread);
+  }
   return (
     <div className="flex space-x-1">
-      <button
+      {/* <button
         className="mx-1 flex items-center space-x-1"
         onClick={() => user?.id && like(thread.id, user.id)}
-      >
-        <FaRegHeart size={20} />
+      > */}
+      <div className="flex items-center">
+        <Heart
+          liked={thread.liked ?? false}
+          clicked={clicked}
+          onClick={onClickHeart}
+        />
         <span>
           {Number(thread.totallikes) > 0 ? Number(thread.totallikes) : ""}
         </span>
-      </button>
+      </div>
+      {/* </button> */}
 
       {isFirstAncestor ? (
         <Button disabled variant={"link"} className="space-x-1 p-1">
@@ -91,6 +112,7 @@ export default function ThreadActions({
           </PopoverContent>
         </Popover>
       )}
+      <div></div>
     </div>
   );
 }

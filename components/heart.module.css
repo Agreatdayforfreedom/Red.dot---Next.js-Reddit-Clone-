@@ -1,0 +1,113 @@
+.container {
+  position: relative;
+  height: 36px;
+  width: 36px;
+}
+.fi_icon {
+  color: inherit;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  height: 24px;
+  width: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vertical-align: sub;
+}
+
+.fi_icon_fill {
+  stroke-width: 0;
+  fill: currentColor;
+}
+.hi_fav_explosion {
+  transform-origin: center;
+  transform: scale(1.5) translateY(-5%);
+}
+.hi_fav_explosion .explosion {
+  transform-origin: center;
+  transform: scale(0);
+  animation: explosion 1650ms ease infinite;
+}
+.hi_fav_explosion .particle {
+  transform-origin: center;
+  opacity: 0;
+}
+.hi_fav_explosion .particle.particle_1 {
+  animation: particle-1-explosion 1650ms ease 150ms infinite;
+}
+.hi_fav_explosion .particle.particle_2 {
+  animation: particle-2-explosion 1650ms ease 150ms infinite;
+}
+@keyframes explosion {
+  0% {
+    color: #a72727;
+    stroke: rgba(167, 39, 39, 0);
+    stroke-width: 2;
+    transform: scale(0);
+  }
+  3% {
+    color: #a72727;
+  }
+  9% {
+    stroke: rgba(167, 39, 39, 0);
+  }
+  13% {
+    stroke-width: 2;
+  }
+  14% {
+    color: #a72866;
+    opacity: 1;
+  }
+  17% {
+    stroke: #a72866;
+    transform: scale(1);
+  }
+  19% {
+    color: rgba(167, 39, 39, 0);
+  }
+  30%,
+  100% {
+    color: rgba(167, 39, 39, 0);
+    stroke-width: 0;
+    opacity: 0;
+    stroke: #a72866;
+  }
+}
+
+@keyframes particle-1-explosion {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  9% {
+    opacity: 1;
+  }
+  45% {
+    transform: scale(1.375);
+  }
+  60%,
+  100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+@keyframes particle-2-explosion {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  6% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+    transform: scale(1.15);
+  }
+}

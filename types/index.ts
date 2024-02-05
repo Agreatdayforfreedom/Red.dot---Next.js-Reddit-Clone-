@@ -4,6 +4,7 @@ export type ltree = string;
 export type MissingKeys = {
   node_path: ltree;
   totallikes: number;
+  liked: boolean;
 };
 
 /**
