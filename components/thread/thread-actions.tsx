@@ -15,6 +15,7 @@ import {
 import ThreadUpdateButtom from "@/components/thread/thread-update-button";
 import ShareButton from "@/components/thread/share-button";
 import useCurrentUser from "@/hooks/useCurrentUser";
+import { like } from "../../lib/actions";
 
 interface Props {
   onReply?: (type: any) => void;
@@ -42,8 +43,14 @@ export default function ThreadActions({
   };
   return (
     <div className="flex space-x-1">
-      <button className="mx-1 ">
+      <button
+        className="mx-1 flex items-center space-x-1"
+        onClick={() => user?.id && like(thread.id, user.id)}
+      >
         <FaRegHeart size={20} />
+        <span>
+          {Number(thread.totallikes) > 0 ? Number(thread.totallikes) : ""}
+        </span>
       </button>
 
       {isFirstAncestor ? (

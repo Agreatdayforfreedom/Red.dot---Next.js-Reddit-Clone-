@@ -3,14 +3,16 @@ import { Thread as IThread, User } from "@prisma/client";
 export type ltree = string;
 export type MissingKeys = {
   node_path: ltree;
+  totallikes: number;
 };
 
 /**
  * @description {type} of `Thread` and `User` join
  */
-export type Thread = IThread & {
-  user: User;
-};
+export type Thread = IThread &
+  Partial<MissingKeys> & {
+    user: User;
+  };
 
 /**
  * @description {type} of `Thread` and `User` join without nested objects

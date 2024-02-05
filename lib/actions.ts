@@ -94,11 +94,14 @@ export async function getThread(id: string) {
       t.created_at,
       t.updated,
       t.deleted,
+      COUNT(l.*) as totalLikes,
       u.id as user_id,
       u.image as user_image,
       u.name as user_name
-      FROM thread t LEFT JOIN "user" AS u ON u.id = t."userId"
-      WHERE t.node_path <@ ${Prisma.raw(`'${id}'`)};`;
+      FROM thread t 
+      LEFT JOIN "user" AS u ON u.id = t."userId"
+      LEFT JOIN likes AS l ON l."threadId" = t.id 
+      WHERE t.node_path <@ ${Prisma.raw(`'${id}'`)} GROUP BY t.id, u.id;`;
   return formatRaw(raw);
 }
 
@@ -293,4 +296,35 @@ async function getUserById(id: string) {
 }
 async function getThreadById(id: string) {
   return await db.thread.findUnique({ where: { id } });
+}
+
+export async function like(threadId: string, userId: string) {
+  try {
+    const threadLiked = await db.likes.findFirst({
+      where: {
+        threadId,
+        userId,
+      },
+    });
+
+    if (threadLiked) {
+      //unlike
+      return await db.likes.delete({
+        where: {
+          id: threadLiked.id,
+        },
+      });
+    }
+
+    await db.likes.create({
+      data: {
+        threadId,
+        userId,
+      },
+    });
+
+    revalidatePath(`/thread/${threadId}`);
+  } catch (error) {
+    console.log(error);
+  }
 }
