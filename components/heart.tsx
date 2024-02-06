@@ -1,8 +1,8 @@
-import styles from "@/components/heart.module.css";
+import styles from "@/components/css/heart.module.css";
 import { FaHeart } from "react-icons/fa6";
 import { FaRegHeart } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-import { ButtonHTMLAttributes, useState } from "react";
+import { ButtonHTMLAttributes } from "react";
 import { cn } from "../lib/utils";
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {

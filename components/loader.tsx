@@ -1,5 +1,4 @@
-import styles from "@/components/loader.module.css";
-import { cn } from "@/lib/utils";
+import styles from "@/components/css/loader.module.css";
 
 interface Props {
   width?: number;

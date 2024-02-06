@@ -4,13 +4,17 @@ import Header from "@/components/header";
 
 interface Props {
   children: React.ReactNode;
+  modal: React.ReactNode;
 }
 
-export default function Layout({ children }: Props) {
+export default function Layout({ children, modal }: Props) {
   return (
     <>
       <Header />
-      <main className="mt-12">{children}</main>
+      <main className="mt-12">
+        {modal}
+        {children}
+      </main>
     </>
   );
 }
