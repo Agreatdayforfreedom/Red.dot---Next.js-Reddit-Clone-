@@ -16,7 +16,7 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
   const isPublicRoute = publicRoutes.some((p) => {
     if (p.includes("*")) {
-      const regex = nextUrl.pathname.match(/\/thread\/[\s\S]*?(?=\/|$)/g);
+      const regex = nextUrl.pathname.match(/\/thread\/[\s\S]*?(?=\/|$|new$)/g);
       if (!regex) return false;
       return nextUrl.pathname === regex[0];
     }
