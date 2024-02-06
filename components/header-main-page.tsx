@@ -15,7 +15,11 @@ export default function HeaderMainPage() {
   if (!user) {
     return (
       <div className="flex justify-end my-2 p-2 border-b">
-        <LoginModal open={modal} REDIRECT="/thread/new" />
+        <LoginModal
+          open={modal}
+          onClose={() => setModal(false)}
+          REDIRECT="/thread/new"
+        />
         <Button onClick={onClick}>New Post</Button>
       </div>
     );

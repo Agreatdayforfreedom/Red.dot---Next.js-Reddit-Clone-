@@ -6,6 +6,7 @@ import {
   authRoutes,
   apiAuthPrefix,
   DEFAULT_LOGIN_REDIRECT,
+  expression,
 } from "@/routes";
 
 const { auth } = NextAuth(authConfig);
@@ -16,7 +17,7 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
   const isPublicRoute = publicRoutes.some((p) => {
     if (p.includes("*")) {
-      const regex = nextUrl.pathname.match(/\/thread\/[\s\S]*?(?=\/|$|new$)/g);
+      const regex = nextUrl.pathname.match(expression);
       if (!regex) return false;
       return nextUrl.pathname === regex[0];
     }

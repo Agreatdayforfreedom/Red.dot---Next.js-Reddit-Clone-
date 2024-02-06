@@ -38,6 +38,7 @@ export default function ThreadActions({
 }: Props) {
   const [clicked, setClicked] = React.useState(false);
   const [modal, setModal] = React.useState(false);
+  const [popover, setPopover] = React.useState(false);
   const user = useCurrentUser();
 
   const pathname = usePathname();
@@ -65,9 +66,22 @@ export default function ThreadActions({
     }
   };
 
+  const onClickSave = () => {
+    if (user) {
+      //todo
+    } else {
+      setModal(true);
+    }
+    setPopover(false);
+  };
+
   return (
     <div className="flex space-x-1">
-      <LoginModal open={modal} REDIRECT={pathname} />
+      <LoginModal
+        open={modal}
+        onClose={() => setModal(false)}
+        REDIRECT={pathname}
+      />
       {/* <button
         className="mx-1 flex items-center space-x-1"
         onClick={() => user?.id && like(thread.id, user.id)}
@@ -101,12 +115,16 @@ export default function ThreadActions({
       )}
       <ShareButton currentId={thread.id} />
       {!preview && (
-        <Popover>
+        <Popover open={popover} onOpenChange={setPopover}>
           <PopoverTrigger>
             <BsThreeDots />
           </PopoverTrigger>
           <PopoverContent className="w-fit p-2 flex flex-col space-y-1">
-            <Button variant={"link"} className="mx-1 p-1 space-x-1">
+            <Button
+              variant={"link"}
+              onClick={onClickSave}
+              className="mx-1 p-1 space-x-1"
+            >
               <MdOutlineSaveAlt /> <span>Save</span>
             </Button>
             {user?.id === thread.user.id && !thread.deleted && (
