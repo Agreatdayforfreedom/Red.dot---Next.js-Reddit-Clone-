@@ -332,3 +332,35 @@ export async function like(threadId: string, userId: string) {
     console.log(error);
   }
 }
+
+export async function saveThread(threadId: string, userId: string) {
+  await db.saved.create({
+    data: {
+      threadId,
+      userId,
+    },
+  });
+}
+
+export async function deleteSavedThread(id: string) {
+  await db.saved.delete({
+    where: {
+      id,
+    },
+  });
+}
+
+export async function getThreadsSaved(userId: string) {
+  return await db.saved.findMany({
+    include: {
+      thread: {
+        include: {
+          user: true,
+        },
+      },
+    },
+    where: {
+      userId,
+    },
+  });
+}

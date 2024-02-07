@@ -17,20 +17,12 @@ const CustomScrollBar = ({
         th = modalRef.current.scrollHeight - window.innerHeight;
         ph = (modalRef.current.scrollTop / th) * 100;
       }
-      // console.log(modalRef.current?.sc, window.innerHeight);
-      // console.log("scrolling");
-      // ref.current?.scrollHeight;
       if (ref.current) ref.current.style.height = ph + "%";
     };
-    // if (ref.current) {
-    //   ref.current.onscroll = function () {
-    //     ;
-    //   };
-    // }
-    // ref.current?.removeEventListener("scroll", onScroll);
+    let clean = modalRef.current;
     modalRef.current?.addEventListener("scroll", onScroll);
-    return () => modalRef.current?.removeEventListener("scroll", onScroll);
-  }, []);
+    return () => clean?.removeEventListener("scroll", onScroll);
+  }, [modalRef]);
   return (
     <div className={style.scrollbar}>
       <div ref={ref}></div>

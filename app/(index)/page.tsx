@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import HeaderMainPage from "@/components/header-main-page";
 import { SessionProvider } from "next-auth/react";
-import Heart from "../../components/heart";
 // import { Thread } from "@prisma/client";
 
 export default async function Home() {

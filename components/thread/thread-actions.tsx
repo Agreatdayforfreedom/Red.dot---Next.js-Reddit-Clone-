@@ -15,10 +15,10 @@ import {
 import ThreadUpdateButtom from "@/components/thread/thread-update-button";
 import ShareButton from "@/components/thread/share-button";
 import useCurrentUser from "@/hooks/useCurrentUser";
-import { like } from "../../lib/actions";
-import Heart from "../heart";
+import { like, saveThread } from "@/lib/actions";
+import Heart from "@/components/heart";
 import React from "react";
-import LoginModal from "../auth/login-modal";
+import LoginModal from "@/components/auth/login-modal";
 import { usePathname } from "next/navigation";
 
 interface Props {
@@ -43,15 +43,14 @@ export default function ThreadActions({
 
   const pathname = usePathname();
 
-  const onClickHeart = () => {
+  const onClickHeart = async () => {
     if (user) {
       thread.liked === false && setClicked(true);
-      user?.id && like(thread.id, user.id);
+      user?.id && (await like(thread.id, user.id));
       setTimeout(() => {
         setClicked(false);
       }, 1600);
     } else {
-      console.log("YOU ARE NOT AUTHENTICATED");
       setModal(true);
     }
   };
@@ -60,15 +59,14 @@ export default function ThreadActions({
     if (user && onReply) {
       onReply(type);
     } else {
-      console.log("YOU ARE NOT AUTHENTICATED");
       setModal(true);
       //parallel login route
     }
   };
 
-  const onClickSave = () => {
+  const onClickSave = async () => {
     if (user) {
-      //todo
+      await saveThread(thread.id, user.id!);
     } else {
       setModal(true);
     }

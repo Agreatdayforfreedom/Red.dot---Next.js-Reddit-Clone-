@@ -12,6 +12,8 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
+  trustHost: true,
+
   callbacks: {
     async session(params) {
       let { session, token } = params as { session: Session; token: JWT };

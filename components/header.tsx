@@ -1,8 +1,8 @@
 import React from "react";
-import { IoIosLogOut } from "react-icons/io";
-import { auth, signOut } from "@/auth";
+import { auth } from "@/auth";
 import AuthActions from "@/components/auth/auth-actions";
 import Link from "next/link";
+import PrivateHeader from "./private-header";
 
 export default async function Header() {
   const session = await auth();
@@ -12,25 +12,7 @@ export default async function Header() {
       <nav className="flex items-center mx-4 justify-between h-full">
         <Link href={"/"}>Logo</Link>
 
-        {session?.user ? (
-          <form
-            action={async () => {
-              "use server";
-              await signOut();
-            }}
-            className=""
-          >
-            <button
-              type="submit"
-              className="flex items-center space-x-1 hover:text-orange-700"
-            >
-              <IoIosLogOut size={20} />
-              <span>Log out</span>
-            </button>
-          </form>
-        ) : (
-          <AuthActions />
-        )}
+        {session?.user ? <PrivateHeader /> : <AuthActions />}
       </nav>
     </header>
   );

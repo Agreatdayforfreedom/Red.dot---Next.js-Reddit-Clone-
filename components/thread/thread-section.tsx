@@ -1,14 +1,11 @@
 "use client";
-import { SessionProvider } from "next-auth/react";
 import React from "react";
 import ThreadCard from "@/components/thread/thread-card";
 import DescendantThread from "@/components/thread/descendant-thread";
 import ThreadForm from "@/components/thread/thread-form";
-import { getThread } from "@/lib/actions";
-import useCurrentUser from "@/hooks/useCurrentUser";
 import { useParams } from "next/navigation";
 import { NestedThread } from "@/types";
-
+import { SessionProvider } from "next-auth/react";
 export default function ThreadSection({ thread }: { thread: NestedThread }) {
   const params = useParams<{ id: string }>();
 
