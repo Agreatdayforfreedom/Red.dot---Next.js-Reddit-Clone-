@@ -3,7 +3,7 @@ import { FaRegHeart } from "react-icons/fa";
 import { BiMessage } from "react-icons/bi";
 import { MdOutlineSaveAlt } from "react-icons/md";
 import { BsThreeDots } from "react-icons/bs";
-
+import { FaCheck } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import { Thread } from "@/types";
 import ThreadDeleteButton from "@/components/thread/thread-delete-button";
@@ -17,9 +17,9 @@ import ShareButton from "@/components/thread/share-button";
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { like, saveThread } from "@/lib/actions";
 import Heart from "@/components/heart";
-import React from "react";
+import React, { useTransition } from "react";
 import LoginModal from "@/components/auth/login-modal";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface Props {
   onReply?: (type: any) => void;
@@ -39,9 +39,12 @@ export default function ThreadActions({
   const [clicked, setClicked] = React.useState(false);
   const [modal, setModal] = React.useState(false);
   const [popover, setPopover] = React.useState(false);
-  const user = useCurrentUser();
 
+  const [isPending, startTransition] = useTransition();
+
+  const user = useCurrentUser();
   const pathname = usePathname();
+  const router = useRouter();
 
   const onClickHeart = async () => {
     if (user) {
@@ -60,17 +63,18 @@ export default function ThreadActions({
       onReply(type);
     } else {
       setModal(true);
-      //parallel login route
     }
   };
 
-  const onClickSave = async () => {
+  const onClickSave = () => {
     if (user) {
-      await saveThread(thread.id, user.id!);
+      startTransition(async () => {
+        await saveThread(thread.id, user.id!);
+        router.refresh();
+      });
     } else {
       setModal(true);
     }
-    setPopover(false);
   };
 
   return (
@@ -80,10 +84,6 @@ export default function ThreadActions({
         onClose={() => setModal(false)}
         REDIRECT={pathname}
       />
-      {/* <button
-        className="mx-1 flex items-center space-x-1"
-        onClick={() => user?.id && like(thread.id, user.id)}
-      > */}
       <div className="flex items-center">
         <Heart
           liked={thread.liked ?? false}
@@ -119,11 +119,22 @@ export default function ThreadActions({
           </PopoverTrigger>
           <PopoverContent className="w-fit p-2 flex flex-col space-y-1">
             <Button
+              disabled={isPending || thread.saved}
               variant={"link"}
               onClick={onClickSave}
               className="mx-1 p-1 space-x-1"
             >
-              <MdOutlineSaveAlt /> <span>Save</span>
+              {thread.saved ? (
+                <>
+                  <FaCheck size={18} className="text-green-500" />
+                  <span>Saved</span>
+                </>
+              ) : (
+                <>
+                  <MdOutlineSaveAlt />
+                  <span>Save</span>
+                </>
+              )}{" "}
             </Button>
             {user?.id === thread.user.id && !thread.deleted && (
               <>
