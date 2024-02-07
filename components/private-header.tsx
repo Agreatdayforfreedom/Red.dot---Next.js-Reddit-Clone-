@@ -4,21 +4,20 @@ import { IoIosLogOut } from "react-icons/io";
 import { signOut } from "@/auth";
 import Saved from "@/components/saved";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Button } from "@/components/ui/button";
 
 export default async function PrivateHeader() {
   return (
     <div className="flex items-center space-x-2">
       <Popover>
-        <PopoverTrigger>
-          <Button variant={"secondary"}>Posts Saved</Button>
+        <PopoverTrigger className="py-2 px-4 rounded-lg bg-slate-100">
+          Posts Saved
         </PopoverTrigger>
 
-        <PopoverContent>
-          <Suspense fallback={<p>loading</p>}>
+        <Suspense fallback={<p>loading</p>}>
+          <PopoverContent>
             <Saved />
-          </Suspense>
-        </PopoverContent>
+          </PopoverContent>
+        </Suspense>
       </Popover>
       <form
         action={async () => {

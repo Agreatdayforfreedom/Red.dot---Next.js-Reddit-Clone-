@@ -15,11 +15,12 @@ import {
 import ThreadUpdateButtom from "@/components/thread/thread-update-button";
 import ShareButton from "@/components/thread/share-button";
 import useCurrentUser from "@/hooks/useCurrentUser";
-import { like, saveThread } from "@/lib/actions";
+import { like, saveThread, test } from "@/lib/actions";
 import Heart from "@/components/heart";
-import React from "react";
+import React, { useEffect, useOptimistic, useTransition } from "react";
 import LoginModal from "@/components/auth/login-modal";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 interface Props {
   onReply?: (type: any) => void;
@@ -39,13 +40,30 @@ export default function ThreadActions({
   const [clicked, setClicked] = React.useState(false);
   const [modal, setModal] = React.useState(false);
   const [popover, setPopover] = React.useState(false);
-  const user = useCurrentUser();
+  const [p, st] = useTransition();
+  const router = useRouter();
+  // const [optimisticMessages, addOptimisticMessage] = useOptimistic<Thread>(
+  //   thread,
+  //   (state: Thread, newLike: boolean) => {
+  //     ...state,
+  //     // { message: newMessage },
+  //   }
+  // )
+  async function reval() {
+    router.refresh();
 
+    // st(async () => {
+    //   await test(router);
+    // });
+  }
+
+  const user = useCurrentUser();
   const pathname = usePathname();
 
   const onClickHeart = async () => {
     if (user) {
       thread.liked === false && setClicked(true);
+      thread.liked = !thread.liked;
       user?.id && (await like(thread.id, user.id));
       setTimeout(() => {
         setClicked(false);
@@ -73,17 +91,15 @@ export default function ThreadActions({
     setPopover(false);
   };
 
+  if (p) return <p>updateing</p>;
   return (
     <div className="flex space-x-1">
+      <button onClick={reval}>REVALIDATE</button>
       <LoginModal
         open={modal}
         onClose={() => setModal(false)}
         REDIRECT={pathname}
       />
-      {/* <button
-        className="mx-1 flex items-center space-x-1"
-        onClick={() => user?.id && like(thread.id, user.id)}
-      > */}
       <div className="flex items-center">
         <Heart
           liked={thread.liked ?? false}

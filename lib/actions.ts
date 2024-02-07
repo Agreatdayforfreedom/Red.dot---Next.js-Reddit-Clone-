@@ -10,7 +10,7 @@ import type { RawThread } from "@/types";
 import { formatRaw } from "./format-raw";
 import { Prisma } from "@prisma/client";
 import { ThreadChildSchema, ThreadSchema } from "../schemas/thread";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function login(
@@ -327,12 +327,17 @@ export async function like(threadId: string, userId: string) {
       });
     }
 
-    revalidatePath(`/thread/${threadId}`);
+    // revalidateTag(`/thread/[id]`);
   } catch (error) {
     console.log(error);
   }
 }
 
+export async function test(p: string) {
+  "use server";
+  revalidatePath(p);
+  console.log("refreshing");
+}
 export async function saveThread(threadId: string, userId: string) {
   await db.saved.create({
     data: {
