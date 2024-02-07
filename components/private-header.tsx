@@ -9,7 +9,7 @@ export default async function PrivateHeader() {
   return (
     <div className="flex items-center space-x-2">
       <Popover>
-        <PopoverTrigger className="py-2 px-4 rounded-lg bg-slate-100">
+        <PopoverTrigger className="px-3 py-2 bg-slate-100 rounded">
           Posts Saved
         </PopoverTrigger>
 

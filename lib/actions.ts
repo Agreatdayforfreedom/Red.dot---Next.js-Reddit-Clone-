@@ -100,6 +100,9 @@ export async function getThread(id: string, userId: string) {
       u.image as user_image,
       u.name as user_name,
       COUNT(l.*) as totalLikes,
+      EXISTS(SELECT * FROM saved s WHERE s."threadId" = t.id AND s."userId" = ${Prisma.raw(
+        `'${userId}'`
+      )}) AS saved,
       EXISTS(SELECT * FROM likes ll WHERE ll."threadId" = t.id AND ll."userId" = ${Prisma.raw(
         `'${userId}'`
       )}) AS liked
@@ -339,12 +342,17 @@ export async function test(p: string) {
   console.log("refreshing");
 }
 export async function saveThread(threadId: string, userId: string) {
-  await db.saved.create({
-    data: {
-      threadId,
-      userId,
-    },
-  });
+  try {
+    await db.saved.create({
+      data: {
+        threadId,
+        userId,
+      },
+    });
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export async function deleteSavedThread(id: string) {

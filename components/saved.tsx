@@ -14,14 +14,20 @@ export default async function Saved() {
   const user = await currentUser();
   const saved = await getThreadsSaved(user?.id!);
 
+  if (saved.length === 0)
+    return (
+      <div className="w-full flex items-center justify-center">
+        <p className="text-lg text-slate-500">No threads saved yet</p>
+      </div>
+    );
   return (
-    <div>
+    <div className="max-h-64 overflow-y-scroll no-scrollbar">
       {saved.map((s: Saved & { thread: Thread & { user: User } }) => (
         <div
           key={s.id}
-          className="flex items-center justify-between hover:bg-slate-200 p-1 rounded"
+          className="flex items-center w-full justify-between hover:bg-slate-200 p-1 rounded"
         >
-          <div className="flex flex-col">
+          <div className="flex flex-col w-11/12">
             <div className="flex flex-col">
               <Image
                 src={s.thread.user?.image ?? ""}
@@ -35,11 +41,12 @@ export default async function Saved() {
                 created_at={s.thread.created_at}
               />
             </div>
-            <Button variant={"link"}>
-              <Link href={`/thread/${s.thread.id}`}>
-                <span>{s.thread.content}</span>
-              </Link>
-            </Button>
+            <Link
+              href={`/thread/${s.thread.id}`}
+              className="overflow-ellipsis overflow-hidden block whitespace-nowrap"
+            >
+              {s.thread.content}
+            </Link>
           </div>
           <DeleteSavedButton id={s.id} />
         </div>
