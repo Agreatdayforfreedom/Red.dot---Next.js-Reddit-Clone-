@@ -16,9 +16,11 @@ import { ThreadChildSchema } from "@/schemas/thread";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { newSubThread, updateSubThread } from "@/lib/actions";
-import { usePathname } from "next/navigation";
 import Loader from "@/components/loader";
 import useCurrentUser from "@/hooks/useCurrentUser";
+import { useRouter } from "next/navigation";
+import { useIntercept } from "@/store/use-intercept";
+import axios from "axios";
 
 interface Props {
   threadId: string;
@@ -36,7 +38,9 @@ export default function ThreadForm({
   onReply,
 }: Props) {
   const [isPending, startTransition] = useTransition();
-  const pathname = usePathname();
+  const router = useRouter();
+
+  const { intercepted } = useIntercept();
 
   const user = useCurrentUser();
   const form = useForm<Pick<z.infer<typeof ThreadChildSchema>, "content">>({
@@ -54,30 +58,45 @@ export default function ThreadForm({
       if (user?.id)
         if (content) {
           //! UPDATE
-
           if (values.content === content) {
             return console.log("lol change the content");
           }
-          await updateSubThread(
-            {
-              title: null,
+
+          if (intercepted) {
+            await axios.put(`/api/thread/${threadId}/edit`, {
               content: values.content,
-              id: threadId,
-            },
-            user.id,
-            pathname
-          );
+              title: null,
+            });
+            router.refresh();
+          } else {
+            await updateSubThread(
+              {
+                title: null,
+                content: values.content,
+                id: threadId,
+              },
+              user.id
+            );
+          }
         } else {
           //! CREATE
-          await newSubThread(
-            {
+          if (intercepted) {
+            await axios.post("/api/thread/create", {
               title: null,
               content: values.content,
               parent_id: threadId,
-            },
-            user.id,
-            pathname
-          );
+            });
+            router.refresh();
+          } else {
+            await newSubThread(
+              {
+                title: null,
+                content: values.content,
+                parent_id: threadId,
+              },
+              user.id
+            );
+          }
         }
       form.reset();
       if (onReply) onReply();

@@ -18,7 +18,7 @@ export default function HeaderMainPage() {
         <LoginModal
           open={modal}
           onClose={() => setModal(false)}
-          REDIRECT="/thread/new"
+          REDIRECT="/submit"
         />
         <Button onClick={onClick}>New Post</Button>
       </div>
@@ -27,7 +27,7 @@ export default function HeaderMainPage() {
   return (
     <div className="flex justify-end my-2 p-2 border-b">
       <Button>
-        <Link href="/thread/new">New Post</Link>
+        <Link href="/submit">New Post</Link>
       </Button>
     </div>
   );

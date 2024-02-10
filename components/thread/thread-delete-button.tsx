@@ -1,19 +1,29 @@
 import { GoTrash } from "react-icons/go";
-import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { deleteThread } from "@/lib/actions";
 import { Button } from "../ui/button";
 import { useTransition } from "react";
 import useCurrentUser from "@/hooks/useCurrentUser";
+import { useIntercept } from "@/store/use-intercept";
+import axios from "axios";
 
 export default function ThreadDeleteButton({ id }: { id: string }) {
   const [isPending, startTransition] = useTransition();
-  const pathname = usePathname();
+  const router = useRouter();
   const user = useCurrentUser();
+
+  const { intercepted } = useIntercept();
+
   const onClick = () => {
     startTransition(async () => {
       if (user?.id) {
-        await deleteThread(user.id, id, pathname);
+        if (intercepted) {
+          await axios.delete(`/api/thread/${id}`);
+          router.refresh();
+        } else {
+          await deleteThread(user.id, id);
+        }
       }
     });
   };

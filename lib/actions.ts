@@ -115,8 +115,7 @@ export async function getThread(id: string, userId: string) {
 
 export async function newSubThread(
   values: Omit<z.infer<typeof ThreadChildSchema>, "id">,
-  userId: string,
-  revalidate: string
+  userId: string
 ) {
   const validatedFields = ThreadChildSchema.safeParse(values);
   if (!validatedFields.success) {
@@ -134,23 +133,15 @@ export async function newSubThread(
         userId,
       },
     });
-    revalidatePath(revalidate);
+    revalidatePath("/thread/[id]");
   } catch (error) {
     console.log(error);
   }
 }
 
-// async function getThreadByOwner(threadId, userId) {
-//   where: {
-//     id: threadId
-//     userId
-//   }
-// }
-
 export async function updateSubThread(
   values: Omit<z.infer<typeof ThreadChildSchema>, "parent_id">,
-  userId: string,
-  revalidate: string
+  userId: string
 ) {
   const validatedFields = ThreadChildSchema.required({ id: true })
     .omit({ parent_id: true })
@@ -180,17 +171,13 @@ export async function updateSubThread(
         content,
       },
     });
-    revalidatePath(revalidate);
+    revalidatePath("/thread/[id]");
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function deleteThread(
-  userId: string,
-  id: string,
-  revalidate: string
-) {
+export async function deleteThread(userId: string, id: string) {
   try {
     const userExists = await getUserById(userId);
     const threadExists = await getThreadById(id);
@@ -210,7 +197,7 @@ export async function deleteThread(
         deleted: true,
       },
     });
-    revalidatePath(revalidate);
+    revalidatePath("/thread/[id]");
   } catch (error) {
     console.log(error);
   }
@@ -233,7 +220,6 @@ export async function createPost(
   if (!validatedFields.success) {
     return { message: "Invalid data" };
   }
-  //TODO: validate if user exists
 
   const { content, title, parent_id } = validatedFields.data;
   let redirectId: string = "";
@@ -330,16 +316,10 @@ export async function like(threadId: string, userId: string) {
       });
     }
 
-    // revalidateTag(`/thread/[id]`);
+    revalidateTag(`/thread/[id]`);
   } catch (error) {
     console.log(error);
   }
-}
-
-export async function test(p: string) {
-  "use server";
-  revalidatePath(p);
-  console.log("refreshing");
 }
 export async function saveThread(threadId: string, userId: string) {
   try {
@@ -349,18 +329,25 @@ export async function saveThread(threadId: string, userId: string) {
         userId,
       },
     });
+    revalidatePath("/thread/[id]");
     return { success: true };
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function deleteSavedThread(id: string) {
-  await db.saved.delete({
-    where: {
-      id,
-    },
-  });
+export async function deleteSavedThread(id: string, revalidate: string) {
+  try {
+    await db.saved.delete({
+      where: {
+        id,
+      },
+    });
+
+    revalidatePath(revalidate);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export async function getThreadsSaved(userId: string) {

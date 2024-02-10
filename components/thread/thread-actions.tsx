@@ -15,15 +15,16 @@ import {
 import ThreadUpdateButtom from "@/components/thread/thread-update-button";
 import ShareButton from "@/components/thread/share-button";
 import useCurrentUser from "@/hooks/useCurrentUser";
-import { like, saveThread, test } from "@/lib/actions";
+import { like, saveThread } from "@/lib/actions";
 import Heart from "@/components/heart";
 import React, { useTransition } from "react";
 import LoginModal from "@/components/auth/login-modal";
 import { usePathname, useRouter } from "next/navigation";
+import { useIntercept } from "@/store/use-intercept";
+import axios from "axios";
 
 interface Props {
   onReply?: (type: any) => void;
-  // userId?: string | undefined;
   thread: Thread;
   isFirstAncestor?: boolean;
   preview?: boolean;
@@ -31,7 +32,6 @@ interface Props {
 
 export default function ThreadActions({
   thread,
-  // userId,
   isFirstAncestor = false,
   preview = false,
   onReply,
@@ -39,6 +39,8 @@ export default function ThreadActions({
   const [clicked, setClicked] = React.useState(false);
   const [modal, setModal] = React.useState(false);
   const [popover, setPopover] = React.useState(false);
+
+  const { intercepted } = useIntercept();
 
   const [isPending, startTransition] = useTransition();
 
@@ -48,9 +50,20 @@ export default function ThreadActions({
 
   const onClickHeart = async () => {
     if (user) {
-      thread.liked === false && setClicked(true);
-      thread.liked = !thread.liked;
-      user?.id && (await like(thread.id, user.id));
+      startTransition(async () => {
+        thread.liked === false && setClicked(true);
+        //route handler
+        if (intercepted) {
+          await axios.put(`/api/thread/${thread.id}/like`, {
+            userId: user.id,
+          });
+
+          router.refresh();
+        } else {
+          //server actions
+          user?.id && (await like(thread.id, user.id));
+        }
+      });
       setTimeout(() => {
         setClicked(false);
       }, 1600);
@@ -70,18 +83,20 @@ export default function ThreadActions({
   const onClickSave = () => {
     if (user) {
       startTransition(async () => {
-        await saveThread(thread.id, user.id!);
-        router.refresh();
+        if (intercepted) {
+          await axios.post(`/api/thread/${thread.id}/save`);
+          router.refresh();
+        } else {
+          await saveThread(thread.id, user.id!);
+        }
       });
     } else {
       setModal(true);
     }
   };
 
-  if (p) return <p>updateing</p>;
   return (
     <div className="flex space-x-1">
-      <button onClick={reval}>REVALIDATE</button>
       <LoginModal
         open={modal}
         onClose={() => setModal(false)}

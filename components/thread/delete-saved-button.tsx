@@ -1,18 +1,21 @@
 "use client";
 import React, { useTransition } from "react";
-import { Button } from "../ui/button";
-import { deleteSavedThread } from "../../lib/actions";
+import { Button } from "@/components/ui/button";
+import { deleteSavedThread } from "@/lib/actions";
 import { MdClose } from "react-icons/md";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useIntercept } from "@/store/use-intercept";
+import axios from "axios";
 
 export default function DeleteSavedButton({ id }: { id: string }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
+  const { intercepted } = useIntercept();
 
   function onClick() {
     startTransition(async () => {
-      await deleteSavedThread(id);
-      router.refresh();
+      await deleteSavedThread(id, pathname);
     });
   }
 
