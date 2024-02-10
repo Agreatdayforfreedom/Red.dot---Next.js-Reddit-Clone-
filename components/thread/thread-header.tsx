@@ -8,10 +8,14 @@ interface Props {
 
 export default function ThreadHeader({ username, created_at }: Props) {
   return (
-    <div className="flex items-center  text-sm">
-      <p className="text-blue-900 font-semibold">{username}</p>
+    <div className="flex items-center text-sm ml-1 space-x-px">
+      <p className="text-stone-900 font-semibold hover:underline hover:cursor-pointer">
+        {username}
+      </p>
       <span className="text-slate-500 px-1"> &#183; </span>
-      <p className="text-slate-500">{moment(created_at).format("dddd")}</p>
+      <p className="text-slate-500 font-light">
+        {moment(created_at).format("dddd")}
+      </p>
     </div>
   );
 }

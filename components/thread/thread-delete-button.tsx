@@ -8,7 +8,12 @@ import useCurrentUser from "@/hooks/useCurrentUser";
 import { useIntercept } from "@/store/use-intercept";
 import axios from "axios";
 
-export default function ThreadDeleteButton({ id }: { id: string }) {
+interface Props {
+  closePopover: () => void;
+  id: string;
+}
+
+export default function ThreadDeleteButton({ id, closePopover }: Props) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const user = useCurrentUser();
@@ -24,6 +29,7 @@ export default function ThreadDeleteButton({ id }: { id: string }) {
         } else {
           await deleteThread(user.id, id);
         }
+        closePopover();
       }
     });
   };

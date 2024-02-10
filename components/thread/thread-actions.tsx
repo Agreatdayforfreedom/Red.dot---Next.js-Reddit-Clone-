@@ -1,10 +1,5 @@
 "use client";
-import { FaRegHeart } from "react-icons/fa";
-import { BiMessage } from "react-icons/bi";
-import { MdOutlineSaveAlt } from "react-icons/md";
 import { BsThreeDots } from "react-icons/bs";
-import { FaCheck } from "react-icons/fa6";
-import { Button } from "@/components/ui/button";
 import { Thread } from "@/types";
 import ThreadDeleteButton from "@/components/thread/thread-delete-button";
 import {
@@ -15,13 +10,13 @@ import {
 import ThreadUpdateButtom from "@/components/thread/thread-update-button";
 import ShareButton from "@/components/thread/share-button";
 import useCurrentUser from "@/hooks/useCurrentUser";
-import { like, saveThread } from "@/lib/actions";
-import Heart from "@/components/heart";
-import React, { useTransition } from "react";
+import React, { useState } from "react";
 import LoginModal from "@/components/auth/login-modal";
-import { usePathname, useRouter } from "next/navigation";
-import { useIntercept } from "@/store/use-intercept";
-import axios from "axios";
+import { usePathname } from "next/navigation";
+import ThreadForm from "./thread-form";
+import HeartAction from "./actions/heart-action";
+import ReplyAction from "./actions/reply-action";
+import SaveAction from "./actions/save-action";
 
 interface Props {
   onReply?: (type: any) => void;
@@ -34,140 +29,81 @@ export default function ThreadActions({
   thread,
   isFirstAncestor = false,
   preview = false,
-  onReply,
 }: Props) {
-  const [clicked, setClicked] = React.useState(false);
-  const [modal, setModal] = React.useState(false);
-  const [popover, setPopover] = React.useState(false);
+  const [modal, setModal] = useState(false);
+  const [popover, setPopover] = useState(false);
+  const [openReply, setOpenReply] = useState(false);
 
-  const { intercepted } = useIntercept();
-
-  const [isPending, startTransition] = useTransition();
+  const [type, setType] = useState<"UPDATE" | "CREATE">("CREATE");
 
   const user = useCurrentUser();
+
   const pathname = usePathname();
-  const router = useRouter();
 
-  const onClickHeart = async () => {
-    if (user) {
-      startTransition(async () => {
-        thread.liked === false && setClicked(true);
-        //route handler
-        if (intercepted) {
-          await axios.put(`/api/thread/${thread.id}/like`, {
-            userId: user.id,
-          });
-
-          router.refresh();
-        } else {
-          //server actions
-          user?.id && (await like(thread.id, user.id));
-        }
-      });
-      setTimeout(() => {
-        setClicked(false);
-      }, 1600);
-    } else {
-      setModal(true);
-    }
-  };
+  const showPopover =
+    !preview && user?.id === thread.user.id && !thread.deleted;
+  function onReply(type?: "UPDATE" | "CREATE") {
+    if (type) setType(type);
+    setOpenReply(!openReply);
+  }
 
   const onClick = (type: any) => {
-    if (user && onReply) {
-      onReply(type);
-    } else {
-      setModal(true);
-    }
-  };
-
-  const onClickSave = () => {
     if (user) {
-      startTransition(async () => {
-        if (intercepted) {
-          await axios.post(`/api/thread/${thread.id}/save`);
-          router.refresh();
-        } else {
-          await saveThread(thread.id, user.id!);
-        }
-      });
+      onReply(type);
+      setPopover(false);
     } else {
       setModal(true);
     }
   };
 
   return (
-    <div className="flex space-x-1">
-      <LoginModal
-        open={modal}
-        onClose={() => setModal(false)}
-        REDIRECT={pathname}
-      />
-      <div className="flex items-center">
-        <Heart
-          liked={thread.liked ?? false}
-          clicked={clicked}
-          onClick={onClickHeart}
+    <div>
+      <div className="flex space-x-1">
+        <LoginModal
+          open={modal}
+          onClose={() => setModal(false)}
+          REDIRECT={pathname}
         />
-        <span>
-          {Number(thread.totallikes) > 0 ? Number(thread.totallikes) : ""}
-        </span>
-      </div>
-      {/* </button> */}
 
-      {isFirstAncestor ? (
-        <Button disabled variant={"link"} className="space-x-1 p-1">
-          <BiMessage size={18} className="mt-1" />
-          <span>Comments</span>
-        </Button>
-      ) : (
-        <Button
-          variant={"link"}
-          className="p-1 flex space-x-1"
-          onClick={() => onClick("CREATE")}
-        >
-          <BiMessage size={18} className="mt-1" />
-          <span>Reply</span>
-        </Button>
-      )}
-      <ShareButton currentId={thread.id} />
-      {!preview && (
-        <Popover open={popover} onOpenChange={setPopover}>
-          <PopoverTrigger>
-            <BsThreeDots />
-          </PopoverTrigger>
-          <PopoverContent className="w-fit p-2 flex flex-col space-y-1">
-            <Button
-              disabled={isPending || thread.saved}
-              variant={"link"}
-              onClick={onClickSave}
-              className="mx-1 p-1 space-x-1"
-            >
-              {thread.saved ? (
-                <>
-                  <FaCheck size={18} className="text-green-500" />
-                  <span>Saved</span>
-                </>
-              ) : (
-                <>
-                  <MdOutlineSaveAlt />
-                  <span>Save</span>
-                </>
-              )}{" "}
-            </Button>
-            {user?.id === thread.user.id && !thread.deleted && (
+        <HeartAction openLoginModal={() => setModal(true)} thread={thread} />
+
+        <ReplyAction isFirstAncestor openForm={() => onReply("CREATE")} />
+
+        <ShareButton currentId={thread.id} />
+
+        {showPopover && (
+          <Popover open={popover} onOpenChange={setPopover}>
+            <PopoverTrigger>
+              <BsThreeDots />
+            </PopoverTrigger>
+            <PopoverContent className="w-fit p-2 flex flex-col space-y-1">
               <>
+                <SaveAction
+                  thread={thread}
+                  openLoginModal={() => setModal(true)}
+                />
                 <ThreadUpdateButtom
                   isFirstAncestor={isFirstAncestor}
                   threadId={thread.id}
                   onClick={() => onClick("UPDATE")}
                 />
-                <ThreadDeleteButton id={thread.id} />
+                <ThreadDeleteButton
+                  id={thread.id}
+                  closePopover={() => setPopover(false)}
+                />
               </>
-            )}
-          </PopoverContent>
-        </Popover>
+            </PopoverContent>
+          </Popover>
+        )}
+      </div>
+      {openReply && (
+        <ThreadForm
+          threadId={thread.id}
+          content={type === "UPDATE" ? thread.content : ""}
+          onReply={onReply} //close when create
+          openable
+        />
       )}
-      <div></div>
     </div>
   );
 }

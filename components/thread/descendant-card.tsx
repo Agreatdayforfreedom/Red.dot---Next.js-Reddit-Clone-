@@ -18,9 +18,7 @@ interface Props {
 
 export default function DescendantCard({ thread }: Props) {
   const [collapse, setCollapse] = useState(false);
-  const [openReply, setOpenReply] = useState(false);
 
-  const [type, setType] = useState<"UPDATE" | "CREATE">("CREATE");
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (ref.current && ref.current?.id === window.location.hash.slice(1)) {
@@ -30,13 +28,9 @@ export default function DescendantCard({ thread }: Props) {
   }, [ref]);
 
   //TODO:
-  function reply(type?: "UPDATE" | "CREATE") {
-    if (type) setType(type);
-    setOpenReply(!openReply);
-  }
 
   return (
-    <Card className="my-1 p-0 border-none shadow-none">
+    <Card className="p-0 border-none shadow-none">
       <div style={{ paddingLeft: `${24}px` }}>
         <div className="mr-2" id={thread.id} ref={ref}>
           {!collapse && <ThreadLine onCollapse={() => setCollapse(true)} />}
@@ -45,14 +39,14 @@ export default function DescendantCard({ thread }: Props) {
               <BiExpandVertical
                 onClick={() => setCollapse(false)}
                 size={20}
-                className=" mt-2 hover:cursor-pointer"
+                className=" hover:cursor-pointer"
               />
             )}
             <Image
               src={thread.user?.image ?? ""}
               alt={`${thread.user?.name} avatar`}
-              width={36}
-              height={36}
+              width={28}
+              height={28}
               className="rounded-full"
             />
             <ThreadHeader
@@ -70,15 +64,7 @@ export default function DescendantCard({ thread }: Props) {
               ) : (
                 <p className="break-all text-sm p-2">{thread.content}</p>
               )}
-              <ThreadActions thread={thread} onReply={reply} />
-              {openReply && (
-                <ThreadForm
-                  threadId={thread.id}
-                  content={type === "UPDATE" ? thread.content : ""}
-                  onReply={reply} //close when create
-                  openable
-                />
-              )}
+              <ThreadActions thread={thread} />
             </div>
           )}
         </div>

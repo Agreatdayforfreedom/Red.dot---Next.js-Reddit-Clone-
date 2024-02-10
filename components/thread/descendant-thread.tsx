@@ -13,7 +13,7 @@ export default function DescendantThread({ thread }: Props) {
     <>
       {thread.map((t) => {
         return (
-          <div className="relative" key={t.id}>
+          <div className="relative mt-1" key={t.id}>
             <DescendantCard thread={t} />
           </div>
         );

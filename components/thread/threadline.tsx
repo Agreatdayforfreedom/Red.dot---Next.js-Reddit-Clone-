@@ -19,13 +19,13 @@ export default function ThreadLine({ onCollapse, static_line = false }: Props) {
     <div
       onClick={onCollapse}
       className={cn(
-        "absolute left-[34px] height-line z-40 top-11 w-4 group  hover:cursor-pointer flex items-center",
+        "absolute left-[30px] height-line z-40 top-8 w-4 group  hover:cursor-pointer flex items-center",
         staticClass
       )}
     >
       <div
         className={cn(
-          "w-px  mx-auto h-full border border-slate-300 group-hover:border-black ",
+          "w-px  mx-auto h-full border border-slate-200 group-hover:border-black ",
           c_staticClass
         )}
       ></div>

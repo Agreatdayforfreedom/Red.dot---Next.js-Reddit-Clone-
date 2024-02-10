@@ -8,6 +8,7 @@ import {
 import LoginForm from "@/components/auth/login-form";
 import Link from "next/link";
 import React from "react";
+import Logo from "../logo";
 
 interface Props {
   children: React.ReactNode;
@@ -19,7 +20,8 @@ interface Props {
 function CardWrapper({ children, ...props }: Props) {
   return (
     <Card className="w-[400px]">
-      <CardHeader>
+      <CardHeader className="flex flex-col items-center space-y-4">
+        <Logo />
         <CardTitle>{props.title}</CardTitle>
       </CardHeader>
       <CardContent>{children}</CardContent>
