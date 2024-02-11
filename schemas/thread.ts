@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 export const ThreadSchema = z.object({
-  id: z.string().optional(),
+  id: z.optional(z.string()),
   title: z.string().min(1, {
     message: "Title cannot be empty",
   }),
@@ -10,6 +10,7 @@ export const ThreadSchema = z.object({
     message: "Content cannot be empty",
   }),
   parent_id: z.null(),
+  communityId: z.optional(z.string()),
 });
 
 const _ThreadChildSchema = z.object({

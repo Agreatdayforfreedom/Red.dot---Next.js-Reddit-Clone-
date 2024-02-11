@@ -25,7 +25,7 @@ export default function SaveAction({ thread, openLoginModal }: Props) {
     if (user) {
       startTransition(async () => {
         if (intercepted) {
-          await axios.post(`/api/thread/${thread.id}/save`);
+          await axios.post(`/api/r/thread/${thread.id}/save`);
           router.refresh();
         } else {
           await saveThread(thread.id, user.id!);

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { MouseEvent } from "react";
 import { Button } from "../ui/button";
 import { IoIosShareAlt } from "react-icons/io";
 import { usePathname } from "next/navigation";
@@ -9,7 +9,9 @@ import { useToast } from "@/components/ui/use-toast";
 export default function ShareButton({ currentId }: { currentId: string }) {
   const pathname = usePathname();
   const { toast } = useToast();
-  function copy() {
+  function copy(e: MouseEvent<HTMLButtonElement>) {
+    e.stopPropagation();
+
     navigator.clipboard.writeText(
       window.location.origin + pathname + "#" + currentId
     );

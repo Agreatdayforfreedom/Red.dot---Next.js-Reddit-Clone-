@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
-import CustomScrollBar from "../../../components/custom-scrollbar";
+import CustomScrollBar from "@/components/custom-scrollbar";
 
 export default function Modal({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);

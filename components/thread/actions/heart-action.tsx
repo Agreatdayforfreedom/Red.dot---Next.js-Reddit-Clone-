@@ -1,4 +1,4 @@
-import { useState, useTransition } from "react";
+import { MouseEvent, useState, useTransition } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
@@ -22,13 +22,16 @@ export default function HeartAction({ thread, openLoginModal }: Props) {
   const { intercepted } = useIntercept();
   const user = useCurrentUser();
 
-  const onClick = async ({}) => {
+  const onClick = async (e: MouseEvent<HTMLButtonElement>) => {
+    // e.
+    e.stopPropagation();
+    if (isPending) return;
     if (user) {
       startTransition(async () => {
         thread.liked === false && setClicked(true);
         //route handler
         if (intercepted) {
-          await axios.put(`/api/thread/${thread.id}/like`, {
+          await axios.put(`/api/r/thread/${thread.id}/like`, {
             userId: user.id,
           });
 
@@ -52,7 +55,7 @@ export default function HeartAction({ thread, openLoginModal }: Props) {
         liked={thread.liked ?? false}
         clicked={clicked}
         onClick={onClick}
-        disabled={isPending}
+        // disabled={true}
       />
       <span>
         {Number(thread.totallikes) > 0 ? Number(thread.totallikes) : ""}

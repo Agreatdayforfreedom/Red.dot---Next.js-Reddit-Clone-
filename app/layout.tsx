@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { headers } from "next/headers";
 import axios from "axios";
 import "./globals.css";
-import { signOut } from "@/auth";
-import { authRoutes } from "@/routes";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {

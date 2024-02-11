@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useTransition } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -30,9 +30,8 @@ export default function FormNewPost({
   thread?: Thread;
 }) {
   const [error, setError] = useState("");
-
   const [isPending, startTransition] = useTransition();
-
+  const params = useSearchParams();
   const form = useForm<Partial<z.infer<typeof ThreadSchema>>>({
     resolver: zodResolver(
       ThreadSchema.partial({ id: true, parent_id: true, userId: true })
@@ -40,6 +39,7 @@ export default function FormNewPost({
     defaultValues: {
       title: thread?.title ? thread.title : "",
       content: thread?.content ? thread.content : "",
+      communityId: params.get("c") ?? "",
     },
   });
   let text: string = thread ? "Update" : "Create";
@@ -75,6 +75,19 @@ export default function FormNewPost({
         onSubmit={form.handleSubmit(onSubmit)}
         className="relative w-full px-10 space-x-1 space-y-1"
       >
+        <FormField
+          control={form.control}
+          name="communityId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Community</FormLabel>
+              <FormControl>
+                <Input className="rounded-sm" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="title"

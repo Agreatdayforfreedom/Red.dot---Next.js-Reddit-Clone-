@@ -221,13 +221,25 @@ export async function createPost(
     return { message: "Invalid data" };
   }
 
-  const { content, title, parent_id } = validatedFields.data;
+  const { content, title, parent_id, communityId } = validatedFields.data;
+  let redirectCSlug: string = "";
   let redirectId: string = "";
+  // console.log({ communityId });
   try {
     const userExists = await getUserById(userId);
 
     if (!userExists) {
       return { error: "Invalid data" };
+    }
+
+    const communityExists = await db.community.findUnique({
+      where: {
+        name: communityId,
+      },
+    });
+
+    if (!communityExists) {
+      return { error: "Community does not exist" };
     }
 
     const res = await db.thread.create({
@@ -236,14 +248,17 @@ export async function createPost(
         title,
         parent_id,
         userId,
+        communityId: communityExists.id,
       },
     });
 
     redirectId = res.id;
+    redirectCSlug = communityExists.name;
   } catch (error) {
     console.log(error);
   }
-  if (redirectId) redirect(`/thread/${redirectId}`);
+  if (redirectId && redirectCSlug)
+    redirect(`/r/${redirectCSlug}/thread/${redirectId}`);
 }
 
 export async function updatePost(

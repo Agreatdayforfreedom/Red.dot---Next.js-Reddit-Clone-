@@ -24,7 +24,7 @@ export default function ThreadDeleteButton({ id, closePopover }: Props) {
     startTransition(async () => {
       if (user?.id) {
         if (intercepted) {
-          await axios.delete(`/api/thread/${id}`);
+          await axios.delete(`/api/r/thread/${id}`);
           router.refresh();
         } else {
           await deleteThread(user.id, id);

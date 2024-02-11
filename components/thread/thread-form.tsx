@@ -63,7 +63,7 @@ export default function ThreadForm({
           }
 
           if (intercepted) {
-            await axios.put(`/api/thread/${threadId}/edit`, {
+            await axios.put(`/api/r/thread/${threadId}/edit`, {
               content: values.content,
               title: null,
             });
@@ -81,7 +81,7 @@ export default function ThreadForm({
         } else {
           //! CREATE
           if (intercepted) {
-            await axios.post("/api/thread/create", {
+            await axios.post("/api/r/thread/create", {
               title: null,
               content: values.content,
               parent_id: threadId,

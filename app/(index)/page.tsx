@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import HeaderMainPage from "@/components/header-main-page";
 import { SessionProvider } from "next-auth/react";
+import PopularCommunities from "../../components/community/popular-communities";
 // import { Thread } from "@prisma/client";
 
 export default async function Home() {
@@ -20,10 +21,14 @@ export default async function Home() {
     <div className=" bg-slate-100">
       <SessionProvider>
         <HeaderMainPage />
-        <section className=" h-full w-4/5 mx-auto py-5 ">
-          {TODO.map((thread: Thread) => (
-            <ThreadPreviewCard thread={thread} key={thread.id} />
-          ))}
+        <section className=" h-full w-4/5 flex  mx-auto py-5 ">
+          <div className="w-4/5">
+            {TODO.map((thread: Thread) => (
+              <ThreadPreviewCard thread={thread} key={thread.id} />
+            ))}
+          </div>
+
+          <PopularCommunities />
         </section>
       </SessionProvider>
     </div>
