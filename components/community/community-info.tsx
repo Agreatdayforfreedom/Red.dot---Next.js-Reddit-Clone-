@@ -13,7 +13,11 @@ import { LuCakeSlice } from "react-icons/lu";
 import moment from "moment";
 import { getContrastYIQ } from "../../lib/yiq";
 import { useRouter } from "next/navigation";
-export default function CommunityInfo({ community }: { community: Community }) {
+export default function CommunityInfo({
+  community,
+}: {
+  community: Community & { ismember: boolean; totalmembers: number };
+}) {
   const router = useRouter();
   const onClickCreatePost = () => {
     router.push(`/submit?c=${community.name}`);
@@ -40,7 +44,7 @@ export default function CommunityInfo({ community }: { community: Community }) {
         </div>
         <div className="border-b pb-3">
           <div className="flex w-fit flex-col items-center">
-            <span>22.4m</span>
+            <span>{community.totalmembers}</span>
             <span className="text-sm">Members</span>
           </div>
         </div>

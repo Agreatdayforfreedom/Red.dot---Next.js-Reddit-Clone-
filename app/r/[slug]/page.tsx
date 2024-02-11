@@ -7,27 +7,44 @@ import ThreadPreviewCard from "@/components/thread/thread-preview-card";
 import { Community, Prisma } from "@prisma/client";
 import currentUser from "@/lib/currentUser";
 import JoinButton from "@/components/community/join-button";
+import { $assingRawUser } from "@/lib/format-raw";
+import { RawThread } from "@/types";
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const user = await currentUser();
-  const [community]: Array<Community & { ismember: boolean }> =
-    await db.$queryRaw`
-    SELECT *, EXISTS(SELECT * FROM join_user_community j WHERE c.id = j."communityId" AND "userId" = ${Prisma.raw(
+  const [community]: Array<
+    Community & { ismember: boolean; totalmembers: number }
+  > = await db.$queryRaw`
+    SELECT c.*, 
+    EXISTS(SELECT * FROM join_user_community j WHERE c.id = j."communityId" AND "userId" = ${Prisma.raw(
       `'${user?.id!}'`
-    )}) as ismember
+    )}) as ismember,
+    COUNT(j.*)::int as totalmembers
     FROM community c
-      WHERE name = ${Prisma.raw(`'${params.slug}'`)}
+    LEFT JOIN join_user_community j ON c.id = j."communityId"
+      WHERE name = ${Prisma.raw(`'${params.slug}'`)} GROUP BY c.id
   `;
-  console.log({ community });
+
   if (!community) return notFound();
-  const threads = await db.thread.findMany({
-    include: {
-      user: true,
-    },
-    where: {
-      communityId: community.id,
-    },
-  });
+
+  const threads: RawThread[] = await db.$queryRaw`
+    SELECT 
+      t.*, 
+      u.id as user_id,
+      u.image as user_image,
+      u.name as user_name, 
+      COUNT(l.*) as totallikes,
+      EXISTS(SELECT * FROM likes ll WHERE ll."threadId" = t.id AND ll."userId" = ${Prisma.raw(
+        `'${user?.id!}'`
+      )}) AS liked
+      FROM thread t
+        LEFT JOIN "user" u ON u.id = t."userId" 
+        LEFT JOIN likes l ON l."threadId" = t.id
+     WHERE t."communityId" = ${Prisma.raw(
+       `'${community.id}'`
+     )} GROUP BY t.id, u.id
+  `;
+
   return (
     <div
       className="h-screen"
@@ -49,7 +66,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
         {/* posts */}
         <div className="md:w-4/6">
           {threads.map((t) => (
-            <ThreadPreviewCard thread={t} />
+            <ThreadPreviewCard thread={$assingRawUser(t)} />
           ))}
         </div>
         {/* aside */}

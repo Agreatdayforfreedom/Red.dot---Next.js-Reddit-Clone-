@@ -1,5 +1,7 @@
 "use client";
-import React, { useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import React from "react";
+
 import {
   Card,
   CardContent,
@@ -7,11 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import ThreadHeader from "@/components/thread/thread-header";
 import { Thread } from "@/types";
-import ThreadActions from "./thread-actions";
-import { useRouter } from "next/navigation";
-import { cn } from "../../lib/utils";
+import ThreadActions from "@/components/thread/thread-actions";
+import { cn } from "@/lib/utils";
+import PostHeader from "@/components/thread/post-header";
 
 interface Props {
   thread: Thread;
@@ -29,7 +30,7 @@ export default function ThreadPreviewCard({ thread }: Props) {
       onClick={onNavigate}
     >
       <CardHeader className="break-all p-1 ">
-        <ThreadHeader
+        <PostHeader
           created_at={thread.created_at}
           username={thread.user.name}
         />

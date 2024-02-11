@@ -6,8 +6,10 @@ import {
   authRoutes,
   apiAuthPrefix,
   DEFAULT_LOGIN_REDIRECT,
-  expression,
+  t_expression,
+  r_expression,
 } from "@/routes";
+import { BsXLg } from "react-icons/bs";
 
 const { auth } = NextAuth(authConfig);
 
@@ -16,10 +18,17 @@ export default auth((req) => {
 
   const isLoggedIn = !!req.auth;
   const isPublicRoute = publicRoutes.some((p) => {
-    if (p.includes("*")) {
-      const regex = nextUrl.pathname.match(expression);
-      if (!regex) return false;
-      return nextUrl.pathname === regex[0];
+    if (p === "/r/*/thread/*") {
+      const exp = nextUrl.pathname.match(t_expression);
+      if (exp && exp[0] === nextUrl.pathname) {
+        return true;
+      }
+    }
+    if (p === "/r/*") {
+      const exp = nextUrl.pathname.match(r_expression);
+      if (exp && exp[0] === nextUrl.pathname) {
+        return true;
+      }
     }
     return p === nextUrl.pathname;
   });

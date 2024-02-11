@@ -1,10 +1,10 @@
-import { expression, publicRoutes } from "@/routes";
+import { t_expression, publicRoutes, r_expression } from "@/routes";
 
 describe("public routes", () => {
   const index = "/";
-  const thread_case1 = "/thread/nawdoidawnoidaw";
-  const thread_case2 = "/thread/n";
-  const thread_case3 = "/thread/newdjawlkdjawk";
+  const thread_case1 = "/r/[slug]/thread/nawdoidawnoidaw";
+  const thread_case2 = "/r/[slug]/thread/n";
+  const thread_case3 = "/r/[slug]/thread/newdjawlkdjawk";
 
   it("should pass / path", () => {
     const exp = publicRoutes.includes(index);
@@ -12,33 +12,50 @@ describe("public routes", () => {
     expect(exp).toBeTruthy();
   });
 
+  it("r_expression should pass /r/* on publicRoutes[1] and not match t_expression", () => {
+    const toMatch = publicRoutes[1];
+
+    expect(toMatch).toMatch(r_expression);
+    expect(toMatch).not.toMatch(t_expression);
+  });
+  it("t_expression should pass /r/*/thread/* on publicRoutes[2] and not match r_expression", () => {
+    const toMatch = publicRoutes[2];
+
+    expect(toMatch).toMatch(t_expression);
+    //!it matches /r/* but should return null if it is /r/*/thread/*
+    const match = toMatch.match(r_expression);
+    //!match: /r/* , toMatch /r/*/thread/*
+    const exp = match ? match[0] === toMatch : null;
+    expect(exp).toBeFalsy();
+  });
+
   it("path / should not pass regex", () => {
-    const match = index.match(expression);
+    const match = index.match(t_expression);
     const exp = match ? match[0] === index : null;
 
     expect(exp).toBeFalsy();
   });
 
-  it("should pass with random id", () => {
+  it("should pass with random id and random slug", () => {
     // const match = thread_case1.atch(expression);
-    expect(thread_case1).toMatch(expression);
-    expect(thread_case2).toMatch(expression);
-    expect(thread_case3).toMatch(expression);
+    expect(thread_case1).toMatch(t_expression);
+    expect(thread_case2).toMatch(t_expression);
+    expect(thread_case3).toMatch(t_expression);
   });
 });
 
 describe("private routes", () => {
-  const new_thread = "/thread/new";
-  const edit_thread = "/thread/randomid/edit";
-  it("path /thread/new should not pass regex", () => {
-    const match = new_thread.match(expression);
+  const new_thread = "/submit";
+  const edit_thread = "/r/[slug]/thread/randomid/edit";
+  it("path /submit should not pass regex", () => {
+    const match = new_thread.match(t_expression);
     const exp = match ? match[0] === new_thread : null;
 
     expect(exp).toBeFalsy();
   });
 
-  it("path /thread/randomid/edit should now pass regex", () => {
-    const match = edit_thread.match(expression);
+  it("path /r/[slug]/thread/randomid/edit should now pass regex", () => {
+    const match = edit_thread.match(t_expression);
 
     const exp = match ? match[0] === edit_thread : null;
     expect(exp).toBeFalsy();

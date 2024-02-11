@@ -25,6 +25,11 @@ function _formatRaw(obj: RawThread) {
   }
   return formatted;
 }
+
+export function $assingRawUser(obj: RawThread) {
+  return _formatRaw(obj);
+}
+
 function pushAsChild(
   arr: (Thread & MissingKeys)[],
   end: NestedThread[],
