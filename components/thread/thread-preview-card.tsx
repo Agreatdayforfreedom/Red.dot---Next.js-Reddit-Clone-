@@ -26,7 +26,7 @@ export default function ThreadPreviewCard({ thread }: Props) {
   }
   return (
     <Card
-      className="hover:border-black p-2 my-5 space-y-2 hover:cursor-pointer w-11/12 mx-auto rounded"
+      className="hover:border-black p-2 my-5 space-y-1 hover:cursor-pointer w-11/12 mx-auto rounded"
       onClick={onNavigate}
     >
       <CardHeader className="break-all p-1 ">

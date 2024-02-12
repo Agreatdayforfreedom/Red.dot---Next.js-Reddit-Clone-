@@ -96,6 +96,9 @@ model Community {
   name String @unique
   info String?
   created_at DateTime @default(now())
+  avatar String?
+  header_image String?
+
   //theme
   background_color String @default("#ffffff")
   background_image String? 

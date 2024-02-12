@@ -34,3 +34,9 @@ export type RawUserWithPrefix = {
  * @description tree representaion of a thread
  */
 export type NestedThread = Thread & MissingKeys & { children: NestedThread[] };
+
+export type TypeImageUpload =
+  | "avatar"
+  | "background_image"
+  | "header_image"
+  | null;

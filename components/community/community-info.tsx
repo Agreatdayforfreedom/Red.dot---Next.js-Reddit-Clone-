@@ -22,12 +22,13 @@ export default function CommunityInfo({
   const onClickCreatePost = () => {
     router.push(`/submit?c=${community.name}`);
   };
+
+  let bgHeader: Record<any, any> = { background: community.background_color };
+  if (community.header_image)
+    bgHeader = { backgroundImage: `url(${community.header_image})` };
   return (
     <Card className="hidden md:block rounded-md w-5/6 mx-auto mt-10">
-      <CardHeader
-        className=" rounded-t-md py-4"
-        style={{ background: community.background_color }}
-      >
+      <CardHeader className=" rounded-t-md py-4 bg-cover" style={bgHeader}>
         <CardTitle
           style={{ color: getContrastYIQ(community.background_color) }}
         >

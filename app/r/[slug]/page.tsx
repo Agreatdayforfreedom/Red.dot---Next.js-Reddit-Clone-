@@ -1,7 +1,7 @@
-import axios from "axios";
 import React from "react";
-import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
+
+import { db } from "@/lib/db";
 import CommunityInfo from "@/components/community/community-info";
 import ThreadPreviewCard from "@/components/thread/thread-preview-card";
 import { Community, Prisma } from "@prisma/client";
@@ -9,9 +9,12 @@ import currentUser from "@/lib/currentUser";
 import JoinButton from "@/components/community/join-button";
 import { $assingRawUser } from "@/lib/format-raw";
 import { RawThread } from "@/types";
+import Avatar from "@/components/community/avatar";
+import UpdatePopover from "@/components/community/update-popover";
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const user = await currentUser();
+
   const [community]: Array<
     Community & { ismember: boolean; totalmembers: number }
   > = await db.$queryRaw`
@@ -45,28 +48,44 @@ export default async function Page({ params }: { params: { slug: string } }) {
      )} GROUP BY t.id, u.id
   `;
 
+  let background: Record<any, any> = { background: community.background_color };
+  if (community.background_image) {
+    background = { backgroundImage: `url(${community.background_image})` };
+  }
+
   return (
-    <div
-      className="h-screen"
-      style={{ background: community.background_color }}
-    >
-      <header className="w-full h-11"></header>
+    <div className="h-full" style={background}>
+      <header className="w-full h-36">
+        {community.header_image && (
+          <div
+            className="w-full h-full bg-cover"
+            style={{ backgroundImage: `url(${community.header_image})` }}
+          ></div>
+        )}
+      </header>
       <div className="w-full h-16 bg-white">
-        <div className="w-4/5 mx-auto px-4 flex">
-          <div>
-            <h1 className="text-2xl">{community.name}</h1>
-            <p className="text-slate-600">r/{community.name}</p>
+        <div className="w-4/5 mx-auto px-4  flex justify-between">
+          <div className="flex">
+            <div className="flex space-x-2">
+              <Avatar community={community} />
+              <div>
+                <h1 className="text-2xl">{community.name}</h1>
+                <p className="text-slate-600">r/{community.name}</p>
+              </div>
+            </div>
+            <div className="m-2">
+              <JoinButton community={community} />
+            </div>
           </div>
-          <div className="m-2">
-            <JoinButton community={community} />
-          </div>
+          <UpdatePopover community={community} />
+          <div></div>
         </div>
       </div>
       <div className="  flex flex-col md:flex-row  md:w-4/5 mx-auto">
         {/* posts */}
         <div className="md:w-4/6">
           {threads.map((t) => (
-            <ThreadPreviewCard thread={$assingRawUser(t)} />
+            <ThreadPreviewCard key={t.id} thread={$assingRawUser(t)} />
           ))}
         </div>
         {/* aside */}
