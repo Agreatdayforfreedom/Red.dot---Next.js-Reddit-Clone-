@@ -20,7 +20,6 @@ import Loader from "@/components/loader";
 import { Input } from "@/components/ui/input";
 import { createPost, updatePost } from "@/lib/actions";
 import { Thread } from "@/types";
-import AlertCard from "../alert-card";
 
 export default function FormNewPost({
   userId,
@@ -75,19 +74,21 @@ export default function FormNewPost({
         onSubmit={form.handleSubmit(onSubmit)}
         className="relative w-full px-10 space-x-1 space-y-1"
       >
-        <FormField
-          control={form.control}
-          name="communityId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Community</FormLabel>
-              <FormControl>
-                <Input className="rounded-sm" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {!thread?.id && (
+          <FormField
+            control={form.control}
+            name="communityId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Community</FormLabel>
+                <FormControl>
+                  <Input className="rounded-sm" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           control={form.control}
           name="title"

@@ -10,6 +10,7 @@ import ThreadForm from "@/components/thread/thread-form";
 import { NestedThread } from "@/types";
 import { useIntercept } from "@/store/use-intercept";
 import { useCommunity } from "@/store/use-community";
+import Link from "next/link";
 
 interface Props {
   thread: NestedThread;
@@ -30,13 +31,17 @@ export default function ThreadSection({
     if (community) setCommunity(community);
   }, []);
   return (
-    <section className="pb-5 h-full bg-white flex flex-col">
+    <section className="pb-5 h-full w-full bg-white flex flex-col">
       <SessionProvider>
-        <ThreadCard
-          thread={thread}
-          // user={session?.user as User}
-          isFirstAncestor
-        />
+        {intercepted && (
+          <Link
+            href={`/r/${community?.name}`}
+            className="p-6 pt-3 pb-0 underline"
+          >
+            r/{community?.name}
+          </Link>
+        )}
+        <ThreadCard thread={thread} isFirstAncestor />
         <hr />
         <ThreadForm threadId={params.id as string} label="Reply" />
 

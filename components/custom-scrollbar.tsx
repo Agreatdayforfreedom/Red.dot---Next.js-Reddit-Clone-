@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 import style from "@/components/css/scrollbar.module.css";
+import { useCommunity } from "@/store/use-community";
 
 const CustomScrollBar = ({
   modalRef,
@@ -8,6 +9,7 @@ const CustomScrollBar = ({
 {
   modalRef: React.RefObject<HTMLDivElement>;
 }) => {
+  const { community } = useCommunity();
   const ref = React.useRef<HTMLDivElement>(null);
   useEffect(() => {
     const onScroll = () => {
@@ -17,14 +19,21 @@ const CustomScrollBar = ({
         th = modalRef.current.scrollHeight - window.innerHeight;
         ph = (modalRef.current.scrollTop / th) * 100;
       }
-      if (ref.current) ref.current.style.height = ph + "%";
+      if (ref.current) {
+        ref.current.style.height = ph + "%";
+        if (community.background_color)
+          ref.current.style.background = community.background_color;
+      }
     };
     let clean = modalRef.current;
     modalRef.current?.addEventListener("scroll", onScroll);
     return () => clean?.removeEventListener("scroll", onScroll);
-  }, [modalRef]);
+  }, [modalRef, community]);
   return (
-    <div className={style.scrollbar}>
+    <div
+      className={style.scrollbar}
+      style={{ background: community.background_color + "50" }}
+    >
       <div ref={ref}></div>
     </div>
   );

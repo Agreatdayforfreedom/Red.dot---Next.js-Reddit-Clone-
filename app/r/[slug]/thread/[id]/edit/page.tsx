@@ -1,7 +1,7 @@
 import React from "react";
 import { auth } from "@/auth";
 import FormNewPost from "@/components/thread/form-new-post";
-import { getNullThread } from "../../../../../lib/actions";
+import { getNullThread } from "@/lib/actions";
 import { redirect } from "next/navigation";
 
 export default async function Page({ params }: { params: { id: string } }) {

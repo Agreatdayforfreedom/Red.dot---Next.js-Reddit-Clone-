@@ -103,7 +103,9 @@ export async function getCommunity(slug: string) {
     COUNT(j.*)::int as totalmembers
     FROM community c
     LEFT JOIN join_user_community j ON c.id = j."communityId"
-      WHERE name = ${Prisma.raw(`'${slug}'`)} GROUP BY c.id
+      WHERE c.name = ${Prisma.raw(`'${slug}'`)} OR c.id = ${Prisma.raw(
+    `'${slug}'`
+  )} GROUP BY c.id
 `;
   return community;
 }
@@ -330,7 +332,7 @@ export async function updatePost(
   } catch (error) {
     console.log(error);
   }
-  if (redirectId) redirect(`/thread/${redirectId}`);
+  if (redirectId) redirect(`../${redirectId}`);
 }
 
 async function getUserById(id: string) {
