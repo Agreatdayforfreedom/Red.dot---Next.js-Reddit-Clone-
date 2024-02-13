@@ -1,26 +1,36 @@
 "use client";
 import React, { useEffect } from "react";
+import { Community } from "@prisma/client";
+import { useParams } from "next/navigation";
+import { SessionProvider } from "next-auth/react";
+
 import ThreadCard from "@/components/thread/thread-card";
 import DescendantThread from "@/components/thread/descendant-thread";
 import ThreadForm from "@/components/thread/thread-form";
-import { useParams } from "next/navigation";
 import { NestedThread } from "@/types";
-import { SessionProvider } from "next-auth/react";
 import { useIntercept } from "@/store/use-intercept";
+import { useCommunity } from "@/store/use-community";
 
 interface Props {
   thread: NestedThread;
   intercepted?: boolean;
+  community?: Community | null;
 }
 
-export default function ThreadSection({ thread, intercepted = false }: Props) {
+export default function ThreadSection({
+  thread,
+  community,
+  intercepted = false,
+}: Props) {
   const params = useParams<{ id: string }>();
   const { intercept } = useIntercept();
+  const { setCommunity } = useCommunity();
   useEffect(() => {
     intercept(intercepted);
+    if (community) setCommunity(community);
   }, []);
   return (
-    <section className="py-5 h-full bg-white flex flex-col">
+    <section className="pb-5 h-full bg-white flex flex-col">
       <SessionProvider>
         <ThreadCard
           thread={thread}

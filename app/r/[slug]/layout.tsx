@@ -14,7 +14,7 @@ export default function Layout({ children, modal }: Props) {
       <Header />
       <SessionProvider>
         <main className="mt-12">
-          {modal}
+          {/* {modal} */}
           {children}
         </main>
       </SessionProvider>

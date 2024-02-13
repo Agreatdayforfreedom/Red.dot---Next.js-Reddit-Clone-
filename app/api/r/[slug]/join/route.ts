@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import currentUser from "@/lib/currentUser";
+import { revalidatePath } from "next/cache";
 
 export async function PUT(
   req: NextRequest,
@@ -20,7 +21,6 @@ export async function PUT(
     });
 
     if (alredyJoined) {
-      console.log("here");
       //leave
       await db.join_User_Community.delete({
         where: {

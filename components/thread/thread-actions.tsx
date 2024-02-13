@@ -67,7 +67,10 @@ export default function ThreadActions({
 
         <HeartAction openLoginModal={() => setModal(true)} thread={thread} />
 
-        <ReplyAction isFirstAncestor openForm={() => onReply("CREATE")} />
+        <ReplyAction
+          isFirstAncestor={isFirstAncestor}
+          openForm={() => onReply("CREATE")}
+        />
 
         <ShareButton currentId={thread.id} />
 

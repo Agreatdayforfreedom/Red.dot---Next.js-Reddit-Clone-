@@ -67,8 +67,7 @@ export async function POST(
       }),
     ]);
     return new NextResponse("Uploaded", { status: 200 });
-  } catch (e) {
-    console.log(e);
+  } catch {
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

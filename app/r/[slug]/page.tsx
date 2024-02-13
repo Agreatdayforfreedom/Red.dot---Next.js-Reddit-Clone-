@@ -11,23 +11,13 @@ import { $assingRawUser } from "@/lib/format-raw";
 import { RawThread } from "@/types";
 import Avatar from "@/components/community/avatar";
 import UpdatePopover from "@/components/community/update-popover";
+import HeaderCommunity from "@/components/community/header-community";
+import { getCommunity } from "@/lib/actions";
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const user = await currentUser();
 
-  const [community]: Array<
-    Community & { ismember: boolean; totalmembers: number }
-  > = await db.$queryRaw`
-    SELECT c.*, 
-    EXISTS(SELECT * FROM join_user_community j WHERE c.id = j."communityId" AND "userId" = ${Prisma.raw(
-      `'${user?.id!}'`
-    )}) as ismember,
-    COUNT(j.*)::int as totalmembers
-    FROM community c
-    LEFT JOIN join_user_community j ON c.id = j."communityId"
-      WHERE name = ${Prisma.raw(`'${params.slug}'`)} GROUP BY c.id
-  `;
-
+  const community = await getCommunity(params.slug);
   if (!community) return notFound();
 
   const threads: RawThread[] = await db.$queryRaw`
@@ -54,15 +44,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
   }
 
   return (
-    <div className="h-full" style={background}>
-      <header className="w-full h-36">
-        {community.header_image && (
-          <div
-            className="w-full h-full bg-cover"
-            style={{ backgroundImage: `url(${community.header_image})` }}
-          ></div>
-        )}
-      </header>
+    <div className="min-h-screen" style={background}>
+      <HeaderCommunity community={community} />
       <div className="w-full h-16 bg-white">
         <div className="w-4/5 mx-auto px-4  flex justify-between">
           <div className="flex">

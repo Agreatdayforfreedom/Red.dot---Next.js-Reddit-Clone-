@@ -6,12 +6,13 @@ import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { RegisterSchema } from "@/schemas/register";
 import { db } from "./db";
-import type { RawThread } from "@/types";
-import { formatRaw } from "./format-raw";
-import { Prisma } from "@prisma/client";
+import type { RawThread, Thread } from "@/types";
+import { $assingRawUser, formatRaw } from "./format-raw";
+import { Community, Prisma } from "@prisma/client";
 import { ThreadChildSchema, ThreadSchema } from "../schemas/thread";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
+import currentUser from "./currentUser";
 
 export async function login(
   values: z.infer<typeof LoginSchema>,
@@ -67,24 +68,55 @@ async function getUser(email: string) {
  *
  * @returns all posts with parent_id = null
  */
-export async function getNullThreads() {
-  return await db.thread.findMany({
-    include: {
-      user: true,
-      likes: true,
-    },
-    where: {
-      parent_id: null,
-    },
-  });
+export async function getNullThreads(): Promise<RawThread[]> {
+  const user = await currentUser();
+
+  return await db.$queryRaw`
+    SELECT 
+      t.*, 
+      u.id as user_id,
+      u.image as user_image,
+      u.name as user_name,
+      c.name as community_name,
+      EXISTS(SELECT 
+        *
+       FROM likes ll WHERE ll."threadId" = t.id AND ll."userId" = ${Prisma.raw(
+         `'${user?.id}'`
+       )}) AS liked
+      FROM thread t 
+      LEFT JOIN "user" AS u ON u.id = t."userId"
+      LEFT JOIN likes AS l ON l."threadId" = t.id 
+      LEFT JOIN "community" AS c ON c.id = t."communityId"  
+      WHERE parent_id IS NULL;
+  `;
+}
+
+export async function getCommunity(slug: string) {
+  const user = await currentUser();
+  const [community]: Array<
+    Community & { ismember: boolean; totalmembers: number }
+  > = await db.$queryRaw`
+    SELECT c.*, 
+    EXISTS(SELECT * FROM join_user_community j WHERE c.id = j."communityId" AND "userId" = ${Prisma.raw(
+      `'${user?.id!}'`
+    )}) as ismember,
+    COUNT(j.*)::int as totalmembers
+    FROM community c
+    LEFT JOIN join_user_community j ON c.id = j."communityId"
+      WHERE name = ${Prisma.raw(`'${slug}'`)} GROUP BY c.id
+`;
+  return community;
 }
 
 /**
  * get parent(parent_id = null) and its childs
  *
  */
-export async function getThread(id: string, userId: string) {
-  // console.log(typeof id);
+export async function getThread(id: string) {
+  const user = await currentUser();
+
+  //todo: validate: AND communityId = slug
+
   const raw: RawThread[] = await db.$queryRaw`
     SELECT
       nlevel(t.node_path) as deep,
@@ -96,15 +128,16 @@ export async function getThread(id: string, userId: string) {
       t.created_at,
       t.updated,
       t.deleted,
+      t."communityId", --temporal 
       u.id as user_id,
       u.image as user_image,
       u.name as user_name,
-      COUNT(l.*) as totalLikes,
+      COUNT(l.*)::int as totalLikes,
       EXISTS(SELECT * FROM saved s WHERE s."threadId" = t.id AND s."userId" = ${Prisma.raw(
-        `'${userId}'`
+        `'${user?.id}'`
       )}) AS saved,
       EXISTS(SELECT * FROM likes ll WHERE ll."threadId" = t.id AND ll."userId" = ${Prisma.raw(
-        `'${userId}'`
+        `'${user?.id}'`
       )}) AS liked
       FROM thread t 
       LEFT JOIN "user" AS u ON u.id = t."userId"

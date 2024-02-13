@@ -1,6 +1,6 @@
 "use client";
 import { Community } from "@prisma/client";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -8,16 +8,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { LuCakeSlice } from "react-icons/lu";
 import moment from "moment";
-import { getContrastYIQ } from "../../lib/yiq";
+import { getContrastYIQ } from "@/lib/yiq";
 import { useRouter } from "next/navigation";
-export default function CommunityInfo({
-  community,
-}: {
-  community: Community & { ismember: boolean; totalmembers: number };
-}) {
+import CommunityButton from "@/components/community/button-community";
+import { cn } from "@/lib/utils";
+import { useCommunity } from "@/store/use-community";
+
+interface Props {
+  community: Community & { ismember?: boolean; totalmembers?: number };
+  className?: string;
+  asPost?: boolean;
+}
+
+export default function CommunityInfo({ community, className = "" }: Props) {
+  const { setCommunity } = useCommunity();
+  useEffect(() => {
+    //this is bad!
+
+    setCommunity(community);
+  }, [community]);
   const router = useRouter();
   const onClickCreatePost = () => {
     router.push(`/submit?c=${community.name}`);
@@ -27,7 +38,12 @@ export default function CommunityInfo({
   if (community.header_image)
     bgHeader = { backgroundImage: `url(${community.header_image})` };
   return (
-    <Card className="hidden md:block rounded-md w-5/6 mx-auto mt-10">
+    <Card
+      className={cn(
+        "hidden md:block rounded-md w-5/6 mx-auto mt-10",
+        className
+      )}
+    >
       <CardHeader className=" rounded-t-md py-4 bg-cover" style={bgHeader}>
         <CardTitle
           style={{ color: getContrastYIQ(community.background_color) }}
@@ -50,17 +66,10 @@ export default function CommunityInfo({
           </div>
         </div>
       </CardContent>
-      <CardFooter>
-        <Button
-          className="w-full"
-          style={{
-            background: community.interactive_elements_color,
-            color: getContrastYIQ(community.interactive_elements_color),
-          }}
-          onClick={onClickCreatePost}
-        >
+      <CardFooter className="flex flex-col space-y-2">
+        <CommunityButton className="w-full" onClick={onClickCreatePost}>
           Create Post
-        </Button>
+        </CommunityButton>
       </CardFooter>
     </Card>
   );

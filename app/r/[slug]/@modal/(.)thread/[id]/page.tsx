@@ -6,9 +6,7 @@ import currentUser from "@/lib/currentUser";
 import { notFound } from "next/navigation";
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const user = await currentUser();
-
-  const [thread] = await getThread(params.id, user?.id!);
+  const [thread] = await getThread(params.id);
   if (!thread) return notFound();
   return (
     <Modal>

@@ -1,15 +1,18 @@
 "use client";
 import React, { useTransition } from "react";
 import { Community } from "@prisma/client";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
 import axios from "axios";
+import CommunityButton from "./button-community";
+import { cn } from "@/lib/utils";
 
 export default function JoinButton({
   community,
+  className = "",
 }: {
-  community: Community & { ismember: boolean };
+  community: Community & { ismember?: boolean };
+  className?: string;
 }) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -17,22 +20,18 @@ export default function JoinButton({
     startTransition(async () => {
       try {
         await axios.put(`/api/r/${community.id}/join`, null);
+        router.refresh();
       } catch (error) {}
-      router.refresh();
     });
   };
   return (
-    <Button
+    <CommunityButton
       variant={"outline"}
-      className="rounded-full px-4 py-0 h-7 bg-transparent"
+      className={cn("rounded-full px-4 py-0 h-7 bg-transparent", className)}
       onClick={onClick}
       disabled={isPending}
-      style={{
-        borderColor: community.interactive_elements_color,
-        color: community.interactive_elements_color,
-      }}
     >
       {community.ismember ? "Leave" : "Join"}
-    </Button>
+    </CommunityButton>
   );
 }

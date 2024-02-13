@@ -7,7 +7,6 @@ import UploadImage from "./upload_image";
 
 export default function Avatar({ community }: { community: Community }) {
   const [openUpload, setOpenUpload] = useState(false);
-  console.log(community.avatar);
   const onClick = () => {
     setOpenUpload(true);
   };

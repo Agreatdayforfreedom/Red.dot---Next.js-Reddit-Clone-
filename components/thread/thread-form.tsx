@@ -21,6 +21,7 @@ import useCurrentUser from "@/hooks/useCurrentUser";
 import { useRouter } from "next/navigation";
 import { useIntercept } from "@/store/use-intercept";
 import axios from "axios";
+import CommunityButton from "@/components/community/button-community";
 
 interface Props {
   threadId: string;
@@ -135,13 +136,13 @@ export default function ThreadForm({
               Cancel
             </Button>
           )}
-          <Button
+          <CommunityButton
             disabled={isPending}
             type="submit"
             className="p-3 h-7 text-xs"
           >
             {isPending ? <Loader width={20} /> : text}
-          </Button>
+          </CommunityButton>
         </div>
       </form>
     </Form>

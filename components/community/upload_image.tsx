@@ -16,6 +16,7 @@ import Loader from "@/components/loader";
 import { useRouter } from "next/navigation";
 import { MdClose } from "react-icons/md";
 import { TypeImageUpload } from "@/types";
+import CommunityButton from "@/components/community/button-community";
 
 interface Props {
   open: boolean;
@@ -94,11 +95,11 @@ export default function UploadImage({ open, type, close, community }: Props) {
           {image && (
             <div className={cn(" relative overflow-hidden", image_classname)}>
               <Image
-                layout="fill"
-                objectFit="cover"
+                fill
+                // objectFit="cover"
                 src={image}
                 alt={type ?? "image"}
-                className="w-full"
+                className="w-full object-cover"
               />
             </div>
           )}
@@ -109,14 +110,7 @@ export default function UploadImage({ open, type, close, community }: Props) {
             <Button variant={"ghost"} onClick={onClose} type="button">
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={isPending || !image}
-              style={{
-                background: community.interactive_elements_color,
-                color: getContrastYIQ(community.interactive_elements_color),
-              }}
-            >
+            <CommunityButton type="submit" disabled={isPending || !image}>
               {isPending ? (
                 <Loader
                   color={getContrastYIQ(community.interactive_elements_color)}
@@ -125,7 +119,7 @@ export default function UploadImage({ open, type, close, community }: Props) {
               ) : (
                 "Upload"
               )}
-            </Button>
+            </CommunityButton>
           </form>
         </CardFooter>
       </Card>
