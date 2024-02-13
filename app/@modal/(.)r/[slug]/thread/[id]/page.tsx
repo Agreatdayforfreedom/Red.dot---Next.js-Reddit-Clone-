@@ -1,5 +1,5 @@
 import React from "react";
-import Modal from "@/app/r/[slug]/@modal/modal";
+import Modal from "@/app/@modal/modal";
 import ThreadSection from "@/components/thread/thread-section";
 import { getThread } from "@/lib/actions";
 import currentUser from "@/lib/currentUser";

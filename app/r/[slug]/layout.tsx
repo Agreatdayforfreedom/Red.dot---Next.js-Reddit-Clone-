@@ -4,19 +4,14 @@ import { SessionProvider } from "next-auth/react";
 
 interface Props {
   children: React.ReactNode;
-  modal: React.ReactNode;
-  team: React.ReactNode;
 }
 
-export default function Layout({ children, modal }: Props) {
+export default function Layout({ children }: Props) {
   return (
     <>
       <Header />
       <SessionProvider>
-        <main className="mt-12">
-          {/* {modal} */}
-          {children}
-        </main>
+        <main className="mt-12">{children}</main>
       </SessionProvider>
     </>
   );

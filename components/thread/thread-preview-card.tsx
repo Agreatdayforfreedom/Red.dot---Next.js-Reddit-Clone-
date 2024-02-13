@@ -23,8 +23,10 @@ export default function ThreadPreviewCard({ thread }: Props) {
   const params = useParams();
   const router = useRouter();
   function onNavigate() {
+    let slug = thread.community_name ? thread.community_name : params.slug;
+
     if (window.getSelection()?.toString()) return; // prevent navigation when select text
-    router.push(`/r/${params.slug}/thread/${thread.id}`);
+    router.push(`/r/${slug}/thread/${thread.id}`);
   }
   return (
     <Card

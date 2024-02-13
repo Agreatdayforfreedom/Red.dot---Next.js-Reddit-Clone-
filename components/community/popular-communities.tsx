@@ -12,7 +12,7 @@ export default async function PopularCommunities() {
       </CardHeader>
       <CardContent className="flex flex-col space-y-1">
         {communities.map((c) => (
-          <Link className="underline" href={"/r/" + c.name}>
+          <Link key={c.id} className="underline" href={"/r/" + c.name}>
             r/{c.name}
           </Link>
         ))}

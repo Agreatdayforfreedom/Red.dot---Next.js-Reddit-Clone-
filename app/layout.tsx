@@ -13,12 +13,17 @@ axios.defaults.baseURL = "http://localhost:3000";
 
 export default function RootLayout({
   children,
+  modal,
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        {children}
+        {modal}
+      </body>
     </html>
   );
 }
