@@ -14,11 +14,13 @@ import UploadImage from "./upload_image";
 import { TypeImageUpload } from "@/types";
 import { Community } from "@prisma/client";
 import ColorPickers from "./color-pickers";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 export default function UpdatePopover({ community }: { community: Community }) {
   const [openUpload, setOpenUpload] = useState(false);
   const [openChangeColors, setChangeColors] = useState(false);
   const [type, setType] = useState<TypeImageUpload>();
+  const user = useCurrentUser();
   function handleClick(t: typeof type) {
     setOpenUpload(true);
     setType(t);
@@ -41,6 +43,7 @@ export default function UpdatePopover({ community }: { community: Community }) {
         type={type}
       />
     );
+  if (!user) return null;
   return (
     <Popover>
       <PopoverTrigger className="flex mt-2 h-fit">

@@ -9,13 +9,11 @@ import {
   t_expression,
   r_expression,
 } from "@/routes";
-import { BsXLg } from "react-icons/bs";
 
 const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { nextUrl } = req;
-
   const isLoggedIn = !!req.auth;
   const isPublicRoute = publicRoutes.some((p) => {
     if (p === "/r/*/thread/*") {
@@ -34,6 +32,11 @@ export default auth((req) => {
   });
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
   const isApiRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
+
+  if (nextUrl.pathname.startsWith("/img")) {
+    return null;
+  }
+
   if (isApiRoute) {
     return null;
   }
