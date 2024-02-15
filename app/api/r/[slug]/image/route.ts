@@ -1,12 +1,12 @@
 import crypto from "crypto";
 import fs from "fs/promises";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import currentUser from "@/lib/currentUser";
 import { Community } from "@prisma/client";
 import { TypeImageUpload } from "@/types";
 export async function POST(
-  req: NextResponse,
+  req: NextRequest,
   { params }: { params: { slug: string } }
 ) {
   try {
