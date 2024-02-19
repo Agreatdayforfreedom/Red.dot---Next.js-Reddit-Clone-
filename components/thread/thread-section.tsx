@@ -10,7 +10,7 @@ import ThreadForm from "@/components/thread/thread-form";
 import { NestedThread } from "@/types";
 import { useIntercept } from "@/store/use-intercept";
 import { useCommunity } from "@/store/use-community";
-import Link from "next/link";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 interface Props {
   thread: NestedThread;
@@ -24,6 +24,7 @@ export default function ThreadSection({
   intercepted = false,
 }: Props) {
   const params = useParams<{ id: string }>();
+  const user = useCurrentUser();
   const { intercept } = useIntercept();
   const { setCommunity } = useCommunity();
   useEffect(() => {
@@ -31,19 +32,23 @@ export default function ThreadSection({
     if (community) setCommunity(community);
   }, []);
   return (
-    <section className="pb-5 h-full w-full bg-white flex flex-col">
-      <SessionProvider>
-        {intercepted && (
-          <Link
-            href={`/r/${community?.name}`}
-            className="p-6 pt-3 pb-0 underline text-black"
-          >
-            r/{community?.name}
-          </Link>
-        )}
+    <SessionProvider>
+      <section className="pb-5 h-full w-full bg-white flex flex-col">
         <ThreadCard thread={thread} isFirstAncestor />
-        <hr />
-        <ThreadForm threadId={params.id as string} label="Reply" />
+        <ThreadForm
+          threadId={params.id as string}
+          label={[
+            <p>
+              Comment as{" "}
+              <span
+                className="underline"
+                style={{ color: community?.interactive_elements_color }}
+              >
+                u/{user?.name}
+              </span>
+            </p>,
+          ]}
+        />
 
         {thread?.children === undefined ? (
           <div className="w-full  text-center">
@@ -54,7 +59,7 @@ export default function ThreadSection({
         ) : (
           <DescendantThread thread={thread.children} />
         )}
-      </SessionProvider>
-    </section>
+      </section>
+    </SessionProvider>
   );
 }

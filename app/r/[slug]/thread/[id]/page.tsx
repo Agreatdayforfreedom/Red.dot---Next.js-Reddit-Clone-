@@ -18,7 +18,11 @@ export default async function Page({
   return (
     <div
       className="flex flex-col min-h-screen items-center"
-      style={{ background: `url(${community?.background_image})` }}
+      style={{
+        background: community.background_image
+          ? `url(${community.background_image})`
+          : community.background_color,
+      }}
     >
       <HeaderCommunity asPost community={community} />
       <div className="flex w-4/5 mt-5 rounded">

@@ -88,8 +88,8 @@ export async function getNullThreads(): Promise<RawThread[]> {
       u.image as user_image,
       u.name as user_name,
       c.name as community_name,
+      c.avatar as community_avatar,
       (SELECT count(*)::int FROM thread tt WHERE tt.node_path ~ ((ltree2text(t.node_path)) || '.*{1,}')::lquery) AS totalComments,
-      -- (SELECT count(*)::int FROM votes)
       (SELECT ARRAY[
         SUM(CASE WHEN type = 'UP' THEN 1 ELSE 0 END)::int, 
         SUM(CASE WHEN type = 'DOWN' THEN 1 ELSE 0 END)::int
@@ -126,7 +126,7 @@ export async function getCommunity(slug: string) {
 }
 
 /**
- * get parent(parent_id = null) and its childs
+ * get parent(parent_id = null) and its children
  *
  */
 export async function getThread(id: string) {
@@ -149,6 +149,9 @@ export async function getThread(id: string) {
       u.id as user_id,
       u.image as user_image,
       u.name as user_name,
+      CASE WHEN t.parent_id IS NULL THEN (
+      SELECT count(*)::int FROM thread tt WHERE tt.node_path ~ ((ltree2text(t.node_path)) || '.*{1,}')::lquery
+      )::int ELSE 0 END as totalcomments,
       EXISTS(SELECT * FROM saved s WHERE s."threadId" = t.id AND s."userId" = ${Prisma.raw(
         `'${user?.id}'`
       )}) AS saved,

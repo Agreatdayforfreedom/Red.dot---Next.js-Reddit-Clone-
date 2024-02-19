@@ -20,7 +20,7 @@ export default async function Home() {
   // });
 
   return (
-    <div className=" bg-slate-100">
+    <div className=" bg-slate-100 min-h-screen">
       <SessionProvider>
         <section className=" h-full w-5/6 flex mx-auto py-5 ">
           <div className=" w-3/4">

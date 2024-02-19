@@ -22,7 +22,7 @@ const CustomScrollBar = ({
       if (ref.current) {
         ref.current.style.height = ph + "%";
         if (community.background_color)
-          ref.current.style.background = community.background_color;
+          ref.current.style.background = community.interactive_elements_color;
       }
     };
     let clean = modalRef.current;
@@ -32,7 +32,7 @@ const CustomScrollBar = ({
   return (
     <div
       className={style.scrollbar}
-      style={{ background: community.background_color + "50" }}
+      style={{ background: community.interactive_elements_color + "50" }}
     >
       <div ref={ref}></div>
     </div>

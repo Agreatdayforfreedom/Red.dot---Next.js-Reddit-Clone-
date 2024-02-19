@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useTransition } from "react";
+import React, { ReactNode, useEffect, useTransition } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import ThreadLine from "@/components/thread/threadline";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ import CommunityButton from "@/components/community/button-community";
 
 interface Props {
   threadId: string;
-  label?: string;
+  label?: string | ReactNode[];
   openable?: boolean;
   content?: string;
   onReply?: () => void;
@@ -109,7 +109,7 @@ export default function ThreadForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="relative px-10 space-x-1 space-y-1"
+        className="relative px-10 space-x-1 space-y-1 mt-5"
       >
         {onReply && <ThreadLine static_line />}
         <FormField

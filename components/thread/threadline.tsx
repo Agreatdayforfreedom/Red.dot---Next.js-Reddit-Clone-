@@ -13,7 +13,7 @@ export default function ThreadLine({ onCollapse, static_line = false }: Props) {
 
   let staticClass = "";
   let c_staticClass = "";
-  let styles = { borderColor: community.background_color ?? "black" };
+  let styles = { borderColor: community.interactive_elements_color ?? "black" };
   if (static_line) {
     staticClass =
       "!top-0 !left-0 !h-full group-hover:!border-inherit hover:!cursor-default";
@@ -30,7 +30,7 @@ export default function ThreadLine({ onCollapse, static_line = false }: Props) {
       onMouseEnter={handleHover}
       onMouseLeave={handleHover}
       className={cn(
-        "absolute left-[30px] height-line z-40 top-8 w-4 group  hover:cursor-pointer flex items-center",
+        "absolute left-[30px] mt-1 height-line z-40 top-8 w-4 group  hover:cursor-pointer flex items-center",
 
         staticClass
       )}

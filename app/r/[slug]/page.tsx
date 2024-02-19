@@ -26,6 +26,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
       u.id as user_id,
       u.image as user_image,
       u.name as user_name, 
+      (SELECT count(*)::int FROM thread tt WHERE tt.node_path ~ ((ltree2text(t.node_path)) || '.*{1,}')::lquery) AS totalComments,
+
       (SELECT ARRAY[
         SUM(CASE WHEN type = 'UP' THEN 1 ELSE 0 END)::int, 
         SUM(CASE WHEN type = 'DOWN' THEN 1 ELSE 0 END)::int

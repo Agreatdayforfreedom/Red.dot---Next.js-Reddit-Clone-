@@ -42,13 +42,14 @@ export default function DescendantCard({ thread }: Props) {
                 className=" hover:cursor-pointer"
               />
             )}
-            <Image
-              src={thread.user?.image ?? ""}
-              alt={`${thread.user?.name} avatar`}
-              width={28}
-              height={28}
-              className="rounded-full"
-            />
+            <div className="w-7 h-7 relative">
+              <Image
+                src={thread.user?.image ?? ""}
+                alt={`${thread.user?.name} avatar`}
+                fill
+                className="rounded-full object-cover"
+              />
+            </div>
             <ThreadHeader
               username={thread.user.name}
               created_at={thread.created_at}

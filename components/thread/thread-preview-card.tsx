@@ -16,7 +16,7 @@ import PostHeader from "@/components/thread/post-header";
 import VoteAction from "@/components/thread/actions/vote-action";
 
 interface Props {
-  thread: Thread & { community_name?: string };
+  thread: Thread;
 }
 
 export default function ThreadPreviewCard({ thread }: Props) {
@@ -35,10 +35,13 @@ export default function ThreadPreviewCard({ thread }: Props) {
       onClick={onNavigate}
     >
       <VoteAction thread={thread} isFirstAncestor preview />
-      <div className="bg-white space-y-1">
+      <div className="bg-white space-y-1 w-full">
         <CardHeader className="break-all p-1 ">
           <PostHeader
-            community={thread.community_name!}
+            community={{
+              name: thread.community_name,
+              avatar: thread.community_avatar,
+            }}
             created_at={thread.created_at}
             username={thread.user.name}
           />
@@ -46,15 +49,15 @@ export default function ThreadPreviewCard({ thread }: Props) {
         </CardHeader>
         <CardContent
           className={cn(
-            "p-0",
+            "p-0 ",
             thread.content.length > 450 && "transparent-gradient" //show opacity on large texts
           )}
         >
-          <p className="pl-4 pt-1 text-sm text-slate-800 max-h-[250px] overflow-hidden z-10">
+          <p className="pl-4 pt-1 text-sm text-slate-800 max-h-[250px] overflow-hidden">
             {thread.content}
           </p>
         </CardContent>
-        <CardFooter className="p-1 pt-0">
+        <CardFooter className="p-1 pt-5">
           <ThreadActions thread={thread} isFirstAncestor preview />
         </CardFooter>
       </div>

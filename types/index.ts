@@ -14,6 +14,8 @@ export type MissingKeys = {
   totalvotes: number[];
   saved: boolean;
   totalcomments?: number;
+  community_name?: string;
+  community_avatar?: string;
 };
 
 /**

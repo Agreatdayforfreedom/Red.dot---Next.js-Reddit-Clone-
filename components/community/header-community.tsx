@@ -17,8 +17,9 @@ export default function HeaderCommunity({
   let post_text: Record<any, string> = {};
   if (community) {
     bg = { backgroundImage: `url(${community.header_image})` };
-    if (!community.header_image) bg = { background: `#efefef` };
-    bg_t = { background: community.background_color + "50" };
+    if (!community.header_image)
+      bg = { background: community.background_color };
+    bg_t = { background: community.interactive_elements_color + "50" };
     post_text = {
       borderBottomWidth: "3px",
       borderColor: community.interactive_elements_color,

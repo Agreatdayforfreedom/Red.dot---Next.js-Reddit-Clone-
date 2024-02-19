@@ -27,7 +27,11 @@ export default function Modal({ children }: { children: ReactNode }) {
     <div className="fixed bg-black/50 top-0 z-50 w-full" onClick={onDismiss}>
       <div
         className="bg-white h-screen w-11/12 mx-auto relative"
-        style={{ background: `url(${community.background_image})` }}
+        style={{
+          background: community.background_image
+            ? `url(${community.background_image})`
+            : community.background_color,
+        }}
         onClick={(e) => onStop(e)}
       >
         <div

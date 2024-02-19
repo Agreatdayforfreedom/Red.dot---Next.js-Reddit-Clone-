@@ -13,7 +13,7 @@ export default function ThreadHeader({ username, created_at }: Props) {
         {username}
       </p>
       <span className="text-slate-500 px-1"> &#183; </span>
-      <p className="text-slate-500 font-light">
+      <p className="text-slate-500 font-light leading-4">
         {moment(created_at, "YYYYMMDD").fromNow()}
       </p>
     </div>
