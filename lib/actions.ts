@@ -81,6 +81,7 @@ export async function getNullThreads(): Promise<RawThread[]> {
   const user = await currentUser();
 
   return await db.$queryRaw`
+
     SELECT 
       t.*, 
       u.id as user_id,
@@ -88,14 +89,18 @@ export async function getNullThreads(): Promise<RawThread[]> {
       u.name as user_name,
       c.name as community_name,
       (SELECT count(*)::int FROM thread tt WHERE tt.node_path ~ ((ltree2text(t.node_path)) || '.*{1,}')::lquery) AS totalComments,
-      EXISTS(SELECT 
-        *
-       FROM likes ll WHERE ll."threadId" = t.id AND ll."userId" = ${Prisma.raw(
+      -- (SELECT count(*)::int FROM votes)
+      (SELECT ARRAY[
+        SUM(CASE WHEN type = 'UP' THEN 1 ELSE 0 END)::int, 
+        SUM(CASE WHEN type = 'DOWN' THEN 1 ELSE 0 END)::int
+      ] FROM votes v WHERE v."threadId" = t.id ) as totalvotes, 
+      (SELECT 
+        type
+       FROM votes v WHERE v."threadId" = t.id AND v."userId" = ${Prisma.raw(
          `'${user?.id}'`
-       )}) AS liked
+       )}) AS voted
       FROM thread t 
       LEFT JOIN "user" AS u ON u.id = t."userId"
-      LEFT JOIN likes AS l ON l."threadId" = t.id 
       LEFT JOIN "community" AS c ON c.id = t."communityId"  
       WHERE parent_id IS NULL;
   `;
@@ -144,16 +149,20 @@ export async function getThread(id: string) {
       u.id as user_id,
       u.image as user_image,
       u.name as user_name,
-      COUNT(l.*)::int as totalLikes,
       EXISTS(SELECT * FROM saved s WHERE s."threadId" = t.id AND s."userId" = ${Prisma.raw(
         `'${user?.id}'`
       )}) AS saved,
-      EXISTS(SELECT * FROM likes ll WHERE ll."threadId" = t.id AND ll."userId" = ${Prisma.raw(
-        `'${user?.id}'`
-      )}) AS liked
+      (SELECT ARRAY[
+        SUM(CASE WHEN type = 'UP' THEN 1 ELSE 0 END)::int, 
+        SUM(CASE WHEN type = 'DOWN' THEN 1 ELSE 0 END)::int
+      ] FROM votes v WHERE v."threadId" = t.id ) as totalvotes, 
+      (SELECT 
+        type
+       FROM votes v WHERE v."threadId" = t.id AND v."userId" = ${Prisma.raw(
+         `'${user?.id}'`
+       )}) AS voted
       FROM thread t 
       LEFT JOIN "user" AS u ON u.id = t."userId"
-      LEFT JOIN likes AS l ON l."threadId" = t.id 
       WHERE t.node_path <@ ${Prisma.raw(`'${id}'`)} GROUP BY t.id, u.id;`;
   return formatRaw(raw);
 }
@@ -351,35 +360,35 @@ async function getThreadById(id: string) {
   return await db.thread.findUnique({ where: { id } });
 }
 
-export async function like(threadId: string, userId: string) {
-  try {
-    const threadLiked = await db.likes.findFirst({
-      where: {
-        threadId,
-        userId,
-      },
-    });
-    if (threadLiked) {
-      //unlike
-      await db.likes.delete({
-        where: {
-          id: threadLiked.id,
-        },
-      });
-    } else {
-      await db.likes.create({
-        data: {
-          threadId,
-          userId,
-        },
-      });
-    }
+// export async function like(threadId: string, userId: string) {
+//   try {
+//     const threadLiked = await db.likes.findFirst({
+//       where: {
+//         threadId,
+//         userId,
+//       },
+//     });
+//     if (threadLiked) {
+//       //unlike
+//       await db.likes.delete({
+//         where: {
+//           id: threadLiked.id,
+//         },
+//       });
+//     } else {
+//       await db.likes.create({
+//         data: {
+//           threadId,
+//           userId,
+//         },
+//       });
+//     }
 
-    revalidateTag(`/thread/[id]`);
-  } catch (error) {
-    console.log(error);
-  }
-}
+//     revalidateTag(`/thread/[id]`);
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 export async function saveThread(threadId: string, userId: string) {
   try {
     await db.saved.create({

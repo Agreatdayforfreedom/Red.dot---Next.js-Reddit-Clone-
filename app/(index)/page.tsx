@@ -13,6 +13,7 @@ import { $assingRawUser } from "../../lib/format-raw";
 
 export default async function Home() {
   const threads: RawThread[] = await getNullThreads();
+  console.log(threads);
   // const TODO = threads.map((t: any) => {
   //   //TODO DELTE THIS
   //   return { ...t, totallikes: t.likes.length };
@@ -31,7 +32,7 @@ export default async function Home() {
             ))}
           </div>
 
-          <aside className="flex-1 mt-5 space-y-7">
+          <aside className="flex-1 mt-5 space-y-7 hidden md:block">
             <HomeBanner />
             <PopularCommunities />
           </aside>

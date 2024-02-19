@@ -1,10 +1,17 @@
 import { Thread as IThread, User } from "@prisma/client";
 
+export type VoteType = "UP" | "DOWN";
+
 export type ltree = string;
+
+/**
+ * @field totalvotes [up,down]
+ *
+ */
 export type MissingKeys = {
   node_path: ltree;
-  totallikes: number;
-  liked: boolean;
+  voted: VoteType | null;
+  totalvotes: number[];
   saved: boolean;
   totalcomments?: number;
 };

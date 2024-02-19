@@ -13,6 +13,7 @@ import { Thread } from "@/types";
 import ThreadActions from "@/components/thread/thread-actions";
 import { cn } from "@/lib/utils";
 import PostHeader from "@/components/thread/post-header";
+import VoteAction from "@/components/thread/actions/vote-action";
 
 interface Props {
   thread: Thread & { community_name?: string };
@@ -30,30 +31,33 @@ export default function ThreadPreviewCard({ thread }: Props) {
   }
   return (
     <Card
-      className="hover:border-black p-2 my-5 space-y-1 hover:cursor-pointer w-11/12 mx-auto rounded"
+      className="hover:border-black border-slate-500 bg-slate-300 flex  my-5 hover:cursor-pointer w-11/12 mx-auto rounded"
       onClick={onNavigate}
     >
-      <CardHeader className="break-all p-1 ">
-        <PostHeader
-          community={thread.community_name!}
-          created_at={thread.created_at}
-          username={thread.user.name}
-        />
-        <CardTitle className="text-xl px-2">{thread.title}</CardTitle>
-      </CardHeader>
-      <CardContent
-        className={cn(
-          "p-0",
-          thread.content.length > 450 && "transparent-gradient" //show opacity on large texts
-        )}
-      >
-        <p className="pl-4 pt-1 text-sm text-slate-800 max-h-[250px] overflow-hidden z-10">
-          {thread.content}
-        </p>
-      </CardContent>
-      <CardFooter className="p-1 pt-0">
-        <ThreadActions thread={thread} isFirstAncestor preview />
-      </CardFooter>
+      <VoteAction thread={thread} isFirstAncestor preview />
+      <div className="bg-white space-y-1">
+        <CardHeader className="break-all p-1 ">
+          <PostHeader
+            community={thread.community_name!}
+            created_at={thread.created_at}
+            username={thread.user.name}
+          />
+          <CardTitle className="text-xl px-2">{thread.title}</CardTitle>
+        </CardHeader>
+        <CardContent
+          className={cn(
+            "p-0",
+            thread.content.length > 450 && "transparent-gradient" //show opacity on large texts
+          )}
+        >
+          <p className="pl-4 pt-1 text-sm text-slate-800 max-h-[250px] overflow-hidden z-10">
+            {thread.content}
+          </p>
+        </CardContent>
+        <CardFooter className="p-1 pt-0">
+          <ThreadActions thread={thread} isFirstAncestor preview />
+        </CardFooter>
+      </div>
     </Card>
   );
 }

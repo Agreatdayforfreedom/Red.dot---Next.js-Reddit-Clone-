@@ -14,6 +14,7 @@ import ThreadActions from "@/components/thread/thread-actions";
 import ThreadHeader from "./thread-header";
 import { User } from "@prisma/client";
 import useCurrentUser from "../../hooks/useCurrentUser";
+import VoteAction from "./actions/vote-action";
 
 export type ClassName = {
   card: string;
@@ -40,39 +41,43 @@ export default function ThreadCard({
   return (
     <Card
       className={cn(
-        "relative shadow-none rounded-none border-none",
+        "relative flex shadow-none rounded-none border-none",
         className.card
       )}
     >
-      <CardHeader className={className.header}>
-        <div className={cn("flex items-center", className.user_info)}>
-          <Image
-            src={thread.user?.image ?? ""}
-            alt={`${thread.user?.name} avatar`}
-            width={30}
-            height={30}
-            className="rounded-full"
-          />
-          <ThreadHeader
-            created_at={thread.created_at}
-            username={thread.user.name}
-          />
-        </div>
-        {/* // TODO: set title to null if it is child */}
-        {isFirstAncestor && (
-          <CardTitle className="text-xl">{thread.title}</CardTitle>
-        )}
-      </CardHeader>
-      <CardContent>
-        {thread.deleted ? (
-          "[deleted]"
-        ) : (
-          <p className="pl-4 pt-1 text-sm text-slate-800">{thread.content}</p>
-        )}
-      </CardContent>
-      <CardFooter className="pb-2">
-        <ThreadActions isFirstAncestor thread={thread} />
-      </CardFooter>
+      {/* <div className="h-20 w-20 bg-red-900"></div> */}
+      <VoteAction thread={thread} isFirstAncestor preview />
+      <div>
+        <CardHeader className={className.header}>
+          <div className={cn("flex items-center", className.user_info)}>
+            <Image
+              src={thread.user?.image ?? ""}
+              alt={`${thread.user?.name} avatar`}
+              width={30}
+              height={30}
+              className="rounded-full"
+            />
+            <ThreadHeader
+              created_at={thread.created_at}
+              username={thread.user.name}
+            />
+          </div>
+          {/* // TODO: set title to null if it is child */}
+          {isFirstAncestor && (
+            <CardTitle className="text-xl">{thread.title}</CardTitle>
+          )}
+        </CardHeader>
+        <CardContent>
+          {thread.deleted ? (
+            "[deleted]"
+          ) : (
+            <p className="pl-4 pt-1 text-sm text-slate-800">{thread.content}</p>
+          )}
+        </CardContent>
+        <CardFooter className="pb-2">
+          <ThreadActions isFirstAncestor thread={thread} />
+        </CardFooter>
+      </div>
     </Card>
   );
 }

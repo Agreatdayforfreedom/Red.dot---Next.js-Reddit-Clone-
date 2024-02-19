@@ -14,9 +14,9 @@ import React, { useState } from "react";
 import LoginModal from "@/components/auth/login-modal";
 import { usePathname } from "next/navigation";
 import ThreadForm from "./thread-form";
-import HeartAction from "./actions/heart-action";
-import ReplyAction from "./actions/reply-action";
-import SaveAction from "./actions/save-action";
+import ReplyAction from "@/components/thread/actions/reply-action";
+import SaveAction from "@/components/thread/actions/save-action";
+import VoteAction from "@/components/thread/actions/vote-action";
 
 interface Props {
   onReply?: (type: any) => void;
@@ -65,7 +65,14 @@ export default function ThreadActions({
           REDIRECT={pathname}
         />
 
-        <HeartAction openLoginModal={() => setModal(true)} thread={thread} />
+        {/* <HeartAction openLoginModal={() => setModal(true)} thread={thread} /> */}
+        {!preview && !isFirstAncestor && (
+          <VoteAction
+            thread={thread}
+            preview={preview}
+            isFirstAncestor={isFirstAncestor}
+          />
+        )}
 
         <ReplyAction
           isFirstAncestor={isFirstAncestor}

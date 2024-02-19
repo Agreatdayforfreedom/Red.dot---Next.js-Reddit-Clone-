@@ -26,13 +26,17 @@ export default async function Page({ params }: { params: { slug: string } }) {
       u.id as user_id,
       u.image as user_image,
       u.name as user_name, 
-      COUNT(l.*) as totallikes,
-      EXISTS(SELECT * FROM likes ll WHERE ll."threadId" = t.id AND ll."userId" = ${Prisma.raw(
-        `'${user?.id!}'`
-      )}) AS liked
+      (SELECT ARRAY[
+        SUM(CASE WHEN type = 'UP' THEN 1 ELSE 0 END)::int, 
+        SUM(CASE WHEN type = 'DOWN' THEN 1 ELSE 0 END)::int
+      ] FROM votes v WHERE v."threadId" = t.id ) as totalvotes, 
+      (SELECT 
+        type
+       FROM votes v WHERE v."threadId" = t.id AND v."userId" = ${Prisma.raw(
+         `'${user?.id}'`
+       )}) AS voted
       FROM thread t
         LEFT JOIN "user" u ON u.id = t."userId" 
-        LEFT JOIN likes l ON l."threadId" = t.id
      WHERE t."communityId" = ${Prisma.raw(
        `'${community.id}'`
      )} GROUP BY t.id, u.id
