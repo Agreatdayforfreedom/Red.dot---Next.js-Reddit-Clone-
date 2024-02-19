@@ -69,6 +69,7 @@ export default function ThreadActions({
 
         <ReplyAction
           isFirstAncestor={isFirstAncestor}
+          totalComments={thread.totalcomments ?? 0}
           openForm={() => onReply("CREATE")}
         />
 

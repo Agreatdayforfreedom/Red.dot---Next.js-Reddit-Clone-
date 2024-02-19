@@ -36,7 +36,7 @@ export default function ThreadSection({
         {intercepted && (
           <Link
             href={`/r/${community?.name}`}
-            className="p-6 pt-3 pb-0 underline"
+            className="p-6 pt-3 pb-0 underline text-black"
           >
             r/{community?.name}
           </Link>

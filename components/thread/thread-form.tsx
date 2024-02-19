@@ -119,7 +119,7 @@ export default function ThreadForm({
             <FormItem>
               {label && <FormLabel>{label}</FormLabel>}
               <FormControl>
-                <Textarea className="rounded-sm" {...field} />
+                <Textarea className="rounded-sm text-black" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

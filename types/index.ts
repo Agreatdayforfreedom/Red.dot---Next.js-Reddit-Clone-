@@ -6,6 +6,7 @@ export type MissingKeys = {
   totallikes: number;
   liked: boolean;
   saved: boolean;
+  totalcomments?: number;
 };
 
 /**

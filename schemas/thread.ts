@@ -2,9 +2,12 @@ import * as z from "zod";
 
 export const ThreadSchema = z.object({
   id: z.optional(z.string()),
-  title: z.string().min(1, {
-    message: "Title cannot be empty",
-  }),
+  title: z
+    .string()
+    .min(1, {
+      message: "Title cannot be empty",
+    })
+    .optional(),
 
   content: z.string().min(1, {
     message: "Content cannot be empty",

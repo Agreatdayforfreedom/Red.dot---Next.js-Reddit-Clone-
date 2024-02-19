@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     await db.thread.create({
       data: {
         content,
-        title: "static title",
+        title: title ? title : null,
         parent_id,
         userId: user.id,
       },

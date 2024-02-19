@@ -55,7 +55,16 @@ export async function register(values: z.infer<typeof RegisterSchema>) {
     return { error: "The email has already been registered " };
   }
 
-  await db.user.create({ data: { email, name, password } });
+  await db.user.create({
+    data: {
+      email,
+      name,
+      image: `https://www.gravatar.com/avatar/${Math.floor(
+        Math.random() * 1000
+      )}?d=wavatar&f=y&s=32`,
+      password,
+    },
+  });
 
   return { success: "Registered successfully!" };
 }
@@ -78,6 +87,7 @@ export async function getNullThreads(): Promise<RawThread[]> {
       u.image as user_image,
       u.name as user_name,
       c.name as community_name,
+      (SELECT count(*)::int FROM thread tt WHERE tt.node_path ~ ((ltree2text(t.node_path)) || '.*{1,}')::lquery) AS totalComments,
       EXISTS(SELECT 
         *
        FROM likes ll WHERE ll."threadId" = t.id AND ll."userId" = ${Prisma.raw(
@@ -156,14 +166,13 @@ export async function newSubThread(
   if (!validatedFields.success) {
     return { message: "Something went wrong!" };
   }
-  const { content, parent_id, title } = validatedFields.data;
+  const { content, parent_id } = validatedFields.data;
   //TODO: validate if user exists
 
   try {
     await db.thread.create({
       data: {
         content,
-        title: "static title",
         parent_id,
         userId,
       },
