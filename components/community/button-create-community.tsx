@@ -28,13 +28,19 @@ export default function ButtonCreateCommunity() {
           REDIRECT="/"
         />
       )}
-      <div>
+      <div className=" w-full">
         <FormNewCommunity
           open={openModal}
           closeModal={() => setOpenModal(false)}
         />
 
-        <Button onClick={handleOpen}>New Community</Button>
+        <Button
+          onClick={handleOpen}
+          variant={"outline"}
+          className="border-2 w-full rounded-full"
+        >
+          New Community
+        </Button>
       </div>
     </>
   );

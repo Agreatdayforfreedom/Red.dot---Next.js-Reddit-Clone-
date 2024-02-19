@@ -5,7 +5,7 @@ import { auth } from "@/auth";
 import ThreadPreviewCard from "@/components/thread/thread-preview-card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import HeaderMainPage from "@/components/header-main-page";
+import HomeBanner from "@/components/home-banner";
 import { SessionProvider } from "next-auth/react";
 import PopularCommunities from "../../components/community/popular-communities";
 import { $assingRawUser } from "../../lib/format-raw";
@@ -21,9 +21,8 @@ export default async function Home() {
   return (
     <div className=" bg-slate-100">
       <SessionProvider>
-        <HeaderMainPage />
-        <section className=" h-full w-4/5 flex  mx-auto py-5 ">
-          <div className="w-4/5">
+        <section className=" h-full w-5/6 flex mx-auto py-5 ">
+          <div className=" w-3/4">
             {threads.map((thread) => (
               <ThreadPreviewCard
                 thread={$assingRawUser(thread)}
@@ -32,7 +31,10 @@ export default async function Home() {
             ))}
           </div>
 
-          <PopularCommunities />
+          <aside className="flex-1 mt-5 space-y-7">
+            <HomeBanner />
+            <PopularCommunities />
+          </aside>
         </section>
       </SessionProvider>
     </div>
