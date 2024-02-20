@@ -18,6 +18,7 @@
 
 /public/img/*
 !/public/img/home/
+!/public/img/readme/
 
 # misc
 .DS_Store

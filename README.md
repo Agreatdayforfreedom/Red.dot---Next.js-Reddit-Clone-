@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Red.dot - Nextjs Reddit Clone
 
-## Getting Started
+![Home](/public/img/readme/home.png)
 
-First, run the development server:
+![Parallel](/public/img/readme/parallel.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+![Community](/public/img/readme/community.png)
+
+![Tree](/public/img/readme/tree.png)
+
+## Features
+
+- Authentication using Auth.js
+- N level of nested comments using ltree type
+- Customize community UI
+  - Choose between background color or image, upload community avatar, etc
+  - Join/Leave community
+- Optimistic updates for a better user experience
+- And more...
+
+## Getting started
+
+First, clone the project
+
+```
+git clone aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+and copy these environment variables into a .env file
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+AUTH_SECRET=
+NEXTAUTH_URL=
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+DATABASE_URL=postgres[ql]://[username[:password]@][host[:port],]/database[?parameter_list]
+```
 
-## Learn More
+replace `DATABASE_URL` with the respective uri.
 
-To learn more about Next.js, take a look at the following resources:
+## Database
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Docker
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Create a postgres instance
 
-## Deploy on Vercel
+```
+docker run --name psql-reddot -e POSTGRES_PASSWORD=root -d postgres
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Prisma
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Generate Prisma client
+
+```
+npx prisma generate
+```
+
+then copy the content of `init.sql` directly in to the postgres CLI
+
+and that's all you need to get started!
+
+## References
+
+[Postgres hierarchical tree-like data type](https://www.postgresql.org/docs/current/ltree.html)
