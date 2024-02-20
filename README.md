@@ -15,6 +15,7 @@
 - Customize community UI
   - Choose between background color or image, upload community avatar, etc
   - Join/Leave community
+- Parallel post route
 - Optimistic updates for a better user experience
 - And more...
 
