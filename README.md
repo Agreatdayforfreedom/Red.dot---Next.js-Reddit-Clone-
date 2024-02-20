@@ -24,7 +24,7 @@
 First, clone the project
 
 ```
-git clone aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+git clone https://github.com/Agreatdayforfreedom/Red.dot---Next.js-Reddit-Clone-.git
 ```
 
 and copy these environment variables into a .env file
