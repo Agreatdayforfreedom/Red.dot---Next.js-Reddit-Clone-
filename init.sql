@@ -1,4 +1,22 @@
 CREATE EXTENSION IF NOT EXISTS ltree;
+
+CREATE TABLE IF NOT EXISTS "thread" (
+    "id" TEXT NOT NULL,
+    "title" TEXT,
+    "content" TEXT NOT NULL,
+    "parent_id" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "update_at" TIMESTAMP(3),
+    "node_path" ltree,
+    "updated" BOOLEAN NOT NULL DEFAULT false,
+    "deleted" BOOLEAN NOT NULL DEFAULT false,
+    "deep" INTEGER,
+    "userId" TEXT NOT NULL,
+    "communityId" TEXT,
+
+    CONSTRAINT "thread_pkey" PRIMARY KEY ("id")
+);
+
 CREATE INDEX idx_gist_node_path ON thread USING GIST(node_path);
 
 CREATE OR REPLACE FUNCTION get_calculated_node_path(id text)
