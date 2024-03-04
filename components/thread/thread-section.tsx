@@ -38,7 +38,7 @@ export default function ThreadSection({
         <ThreadForm
           threadId={params.id as string}
           label={[
-            <p>
+            <p key={1}>
               Comment as{" "}
               <span
                 className="underline"
