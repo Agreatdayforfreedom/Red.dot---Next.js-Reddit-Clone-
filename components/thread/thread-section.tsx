@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import { Community } from "@prisma/client";
+import { Community, User } from "@prisma/client";
 import { useParams } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
 
@@ -10,21 +10,21 @@ import ThreadForm from "@/components/thread/thread-form";
 import { NestedThread } from "@/types";
 import { useIntercept } from "@/store/use-intercept";
 import { useCommunity } from "@/store/use-community";
-import useCurrentUser from "@/hooks/useCurrentUser";
 
 interface Props {
   thread: NestedThread;
   intercepted?: boolean;
   community?: Community | null;
+  username?: string;
 }
 
 export default function ThreadSection({
   thread,
   community,
   intercepted = false,
+  username,
 }: Props) {
   const params = useParams<{ id: string }>();
-  const user = useCurrentUser();
   const { intercept } = useIntercept();
   const { setCommunity } = useCommunity();
   useEffect(() => {
@@ -37,17 +37,19 @@ export default function ThreadSection({
         <ThreadCard thread={thread} isFirstAncestor />
         <ThreadForm
           threadId={params.id as string}
-          label={[
-            <p key={1}>
-              Comment as{" "}
-              <span
-                className="underline"
-                style={{ color: community?.interactive_elements_color }}
-              >
-                u/{user?.name}
-              </span>
-            </p>,
-          ]}
+          label={
+            username && [
+              <p key={1}>
+                Comment as{" "}
+                <span
+                  className="underline"
+                  style={{ color: community?.interactive_elements_color }}
+                >
+                  u/{username}
+                </span>
+              </p>,
+            ]
+          }
         />
 
         {thread?.children === undefined ? (
