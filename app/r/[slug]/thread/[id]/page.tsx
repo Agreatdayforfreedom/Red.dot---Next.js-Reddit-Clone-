@@ -6,6 +6,8 @@ import ThreadSection from "@/components/thread/thread-section";
 
 import CommunityInfo from "@/components/community/community-info";
 import HeaderCommunity from "@/components/community/header-community";
+import currentUser from "@/lib/currentUser";
+import { notFound } from "next/navigation";
 
 export default async function Page({
   params,
@@ -13,6 +15,8 @@ export default async function Page({
   params: { slug: string; id: string };
 }) {
   const [thread] = await getThread(params.id);
+  const user = await currentUser();
+  if (!thread) return notFound();
   const community = await getCommunity(params.slug);
 
   return (
@@ -27,7 +31,11 @@ export default async function Page({
       <HeaderCommunity asPost community={community} />
       <div className="flex w-4/5 mt-5 rounded">
         <div className="md:w-4/6">
-          <ThreadSection thread={thread} community={community} />
+          <ThreadSection
+            username={user?.name || ""}
+            thread={thread}
+            community={community}
+          />
         </div>
         {community && (
           <aside className="flex-1">
