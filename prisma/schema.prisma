@@ -6,9 +6,11 @@ generator client {
   previewFeatures = ["postgresqlExtensions", "filteredRelationCount"]
 }
 
+
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  url      = env("POSTGRES_PRISMA_URL")
   extensions = [ltree]
 }
 
