@@ -27,6 +27,7 @@ interface Props {
 
 export default function UploadImage({ open, type, close, community }: Props) {
   const [image, setImage] = useState("");
+  const [error, setError] = useState("");
   const [file, setFile] = useState<File>();
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -39,6 +40,7 @@ export default function UploadImage({ open, type, close, community }: Props) {
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setError(error);
 
     if (!file || !type) return;
     const formData = new FormData();
@@ -47,17 +49,23 @@ export default function UploadImage({ open, type, close, community }: Props) {
     formData.set("type", type);
 
     startTransition(async () => {
-      await fetch(`/api/r/${community.name}/image`, {
+      const res = await fetch(`/api/r/${community.name}/image`, {
         method: "POST",
         body: formData,
       });
-      router.refresh();
-      onClose();
+      const text = JSON.parse(await res.text());
+      if (text.error) {
+        setError(text.error);
+      } else {
+        router.refresh();
+        onClose();
+      }
     });
   }
 
   function onClose() {
     setImage("");
+    setError("");
     setFile(undefined);
     close();
   }
@@ -106,6 +114,7 @@ export default function UploadImage({ open, type, close, community }: Props) {
           {/* </div> */}
         </CardContent>
         <CardFooter className="flex items-center justify-end">
+          {error && !isPending && <p className="text-red-500">{error}</p>}
           <form onSubmit={handleSubmit} className="space-x-2 ">
             <Button variant={"ghost"} onClick={onClose} type="button">
               Cancel

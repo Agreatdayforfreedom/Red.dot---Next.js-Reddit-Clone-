@@ -43,6 +43,13 @@ export async function POST(
       return new NextResponse("Community not found", { status: 404 });
     }
 
+    if (file.size / (1024 * 1024) >= 2) {
+      return new NextResponse(
+        JSON.stringify({ error: "Max image size: 2MB" }),
+        { status: 403 }
+      );
+    }
+
     const extension = file.name.split(".").at(-1);
     if (!extension) return new NextResponse("Invalid image", { status: 400 });
     const fileName = crypto.randomUUID().concat(".", extension);
