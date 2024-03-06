@@ -5,6 +5,8 @@ import { db } from "@/lib/db";
 import currentUser from "@/lib/currentUser";
 import { Community } from "@prisma/client";
 import { TypeImageUpload } from "@/types";
+import cloudinary from "@/lib/cloudinary";
+import { UploadApiOptions, UploadApiResponse } from "cloudinary";
 export async function POST(
   req: NextRequest,
   { params }: { params: { slug: string } }
@@ -41,32 +43,70 @@ export async function POST(
       return new NextResponse("Community not found", { status: 404 });
     }
 
-    //uuid file name
     const extension = file.name.split(".").at(-1);
     if (!extension) return new NextResponse("Invalid image", { status: 400 });
     const fileName = crypto.randomUUID().concat(".", extension);
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const path = process.cwd() + `/public/img/${fileName}`;
+    //uuid file name
+    let prod = true;
+    if (prod) {
+      let options: UploadApiOptions = {
+        resource_type: "image",
+        folder: "reddot",
+      };
 
-    communityUpdateType[type] = `/img/${fileName}`;
+      const public_id = communityExists[type]?.split("/").at(-1)?.split(".")[0];
+      const [_, result]: [any, UploadApiResponse] = await Promise.all([
+        public_id
+          ? await cloudinary.uploader.destroy("reddot/" + public_id)
+          : Promise.resolve(),
+        await new Promise((resolve, reject) => {
+          cloudinary.uploader
+            .upload_stream(options, async (err, result) => {
+              if (err) {
+                console.log(err);
+                reject(err);
+              }
+              resolve(result!);
+            })
+            .end(buffer);
+        }),
+      ]);
+      if (result) {
+        communityUpdateType[type] = result.secure_url;
+        await db.community.update({
+          where: {
+            name: params.slug,
+          },
+          data: {
+            ...communityUpdateType,
+          },
+        });
+      }
+      return new NextResponse("Uploaded", { status: 200 });
+    } else {
+      const path = process.cwd() + `/public/img/${fileName}`;
 
-    await Promise.all([
-      communityExists[type]
-        ? await fs.unlink(process.cwd() + `/public${communityExists[type]}`)
-        : Promise.resolve(),
-      await fs.writeFile(path, buffer),
-      await db.community.update({
-        where: {
-          name: params.slug,
-        },
-        data: {
-          ...communityUpdateType,
-        },
-      }),
-    ]);
-    return new NextResponse("Uploaded", { status: 200 });
+      communityUpdateType[type] = `/img/${fileName}`;
+
+      await Promise.all([
+        communityExists[type]
+          ? await fs.unlink(process.cwd() + `/public${communityExists[type]}`)
+          : Promise.resolve(),
+        await fs.writeFile(path, buffer),
+        await db.community.update({
+          where: {
+            name: params.slug,
+          },
+          data: {
+            ...communityUpdateType,
+          },
+        }),
+      ]);
+      return new NextResponse("Uploaded", { status: 200 });
+    }
   } catch {
     return new NextResponse("Internal Server Error", { status: 500 });
   }
