@@ -53,9 +53,9 @@ export default function UploadImage({ open, type, close, community }: Props) {
         method: "POST",
         body: formData,
       });
-      const text = JSON.parse(await res.text());
-      if (text.error) {
-        setError(text.error);
+      const text = await res.text();
+      if (text && res.status > 400) {
+        setError(text);
       } else {
         router.refresh();
         onClose();

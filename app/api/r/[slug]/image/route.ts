@@ -44,10 +44,7 @@ export async function POST(
     }
 
     if (file.size / (1024 * 1024) >= 2) {
-      return new NextResponse(
-        JSON.stringify({ error: "Max image size: 2MB" }),
-        { status: 403 }
-      );
+      return new NextResponse("Max image size: 2MB", { status: 403 });
     }
 
     const extension = file.name.split(".").at(-1);
