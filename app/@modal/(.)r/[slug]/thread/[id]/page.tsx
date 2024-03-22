@@ -10,8 +10,9 @@ export default async function Page({ params }: { params: { id: string } }) {
   const user = await currentUser();
   if (!thread) return notFound();
   const community = await getCommunity(thread.communityId ?? "");
+
   return (
-    <Modal>
+    <Modal community={community}>
       <ThreadSection
         username={user?.name || ""}
         community={community}

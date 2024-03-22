@@ -2,10 +2,15 @@
 import { useRouter } from "next/navigation";
 import { MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 import CustomScrollBar from "@/components/custom-scrollbar";
-import { useCommunity } from "@/store/use-community";
+import { Community } from "@prisma/client";
 
-export default function Modal({ children }: { children: ReactNode }) {
-  const { community } = useCommunity();
+export default function Modal({
+  children,
+  community,
+}: {
+  children: ReactNode;
+  community: Community;
+}) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -38,7 +43,7 @@ export default function Modal({ children }: { children: ReactNode }) {
           ref={ref}
           className="flex justify-center max-h-screen my-0 overflow-y-auto no-scrollbar"
         >
-          <CustomScrollBar modalRef={ref} />
+          <CustomScrollBar modalRef={ref} community={community} />
           <div className="w-4/5 flex justify-center mt-5 items-center">
             {children}
           </div>

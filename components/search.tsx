@@ -1,16 +1,23 @@
 "use client";
 import { Community } from "@prisma/client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useCommunity } from "../store/use-community";
 import { Input } from "./ui/input";
 import { MdClose } from "react-icons/md";
 import { getContrastYIQ } from "../lib/yiq";
+import { useParams } from "next/navigation";
 
 export const Search = () => {
+  const params = useParams();
+  const community = useCommunity((state) => state.community);
+  const setClear = useCommunity((state) => state.setClear);
+
+  useEffect(() => {
+    if (!!community) setClear();
+  }, [params]);
   const [avoidCommunityFilter, setAvoidCommunityFilter] =
     useState<boolean>(false);
-  const community = useCommunity((state) => state.community);
 
   const handleAvoidCF = () => {
     setAvoidCommunityFilter(true);

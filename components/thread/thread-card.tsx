@@ -41,6 +41,7 @@ export default function ThreadCard({
   isFirstAncestor,
 }: Props) {
   const { community } = useCommunity();
+  if (!community) return null;
   return (
     <Card
       className={cn(

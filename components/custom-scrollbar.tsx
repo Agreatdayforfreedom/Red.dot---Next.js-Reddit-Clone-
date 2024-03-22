@@ -2,14 +2,16 @@
 import React, { useEffect } from "react";
 import style from "@/components/css/scrollbar.module.css";
 import { useCommunity } from "@/store/use-community";
+import { Community } from "@prisma/client";
 
 const CustomScrollBar = ({
   modalRef,
+  community,
 }: // modalRef,
 {
   modalRef: React.RefObject<HTMLDivElement>;
+  community: Community;
 }) => {
-  const { community } = useCommunity();
   const ref = React.useRef<HTMLDivElement>(null);
   useEffect(() => {
     const onScroll = () => {

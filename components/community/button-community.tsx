@@ -15,7 +15,7 @@ export default function CommunityButton({
   ...props
 }: Props) {
   const { community } = useCommunity();
-
+  if (!community) return null;
   const color = background
     ? background
     : community.interactive_elements_color
