@@ -21,6 +21,8 @@ import {
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { Community, Join_User_Community } from "@prisma/client";
 import Image from "next/image";
+import { Skeleton } from "../ui/skeleton";
+import { Label } from "../ui/label";
 
 interface Props {
   form: UseFormReturn<Partial<z.infer<typeof ThreadSchema>>>;
@@ -34,7 +36,17 @@ export const InputCommunity = ({ form }: Props) => {
     setIsMounted(true);
   }, []);
 
-  if (!isMounted || !user) return null;
+  // if (!isMounted) return null;
+  if (!user || !isMounted)
+    return (
+      <div>
+        <Label>Community</Label>
+        <div className="border rounded-sm py-1 px-2 mt-2 flex space-x-2 items-center">
+          <Skeleton className="w-6 h-6 rounded-full" />
+          <Skeleton className="w-40 h-4 rounded-full" />
+        </div>
+      </div>
+    );
   return (
     <FormField
       control={form.control}
@@ -53,7 +65,7 @@ export const InputCommunity = ({ form }: Props) => {
             <SelectContent className="p-2 space-y-2">
               {user.communities?.map(
                 (c: Join_User_Community & { community: Community }) => (
-                  <SelectItem value={c.community.name}>
+                  <SelectItem id={c.community.id} value={c.community.name}>
                     <div className="flex space-x-2 hover:bg-slate-200 cursor-pointer p-1 rounded-sm">
                       <div className="relative w-6 h-6 ">
                         <Image
