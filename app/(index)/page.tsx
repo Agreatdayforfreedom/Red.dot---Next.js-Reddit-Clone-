@@ -13,11 +13,6 @@ import { $assingRawUser } from "../../lib/format-raw";
 
 export default async function Home() {
   const threads: RawThread[] = await getNullThreads();
-  console.log(threads);
-  // const TODO = threads.map((t: any) => {
-  //   //TODO DELTE THIS
-  //   return { ...t, totallikes: t.likes.length };
-  // });
 
   return (
     <div className=" bg-slate-100 min-h-screen">

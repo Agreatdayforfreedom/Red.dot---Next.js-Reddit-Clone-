@@ -14,7 +14,6 @@ export default function ButtonCreateCommunity() {
     if (user?.id) {
       setOpenModal(true);
     } else {
-      console.log(user);
       setLoginModal(true);
     }
   }

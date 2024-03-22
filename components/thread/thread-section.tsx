@@ -26,11 +26,12 @@ export default function ThreadSection({
 }: Props) {
   const params = useParams<{ id: string }>();
   const { intercept } = useIntercept();
-  const { setCommunity } = useCommunity();
+  const { setCommunity, community: isLoading } = useCommunity();
   useEffect(() => {
     intercept(intercepted);
     if (community) setCommunity(community);
   }, []);
+  if (!isLoading) return null;
   return (
     <SessionProvider>
       <section className="pb-5 h-full w-full bg-white flex flex-col">
