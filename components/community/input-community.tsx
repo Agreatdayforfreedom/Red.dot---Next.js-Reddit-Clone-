@@ -65,7 +65,7 @@ export const InputCommunity = ({ form }: Props) => {
             <SelectContent className="p-2 space-y-2">
               {user.communities?.map(
                 (c: Join_User_Community & { community: Community }) => (
-                  <SelectItem id={c.community.id} value={c.community.name}>
+                  <SelectItem key={c.community.id} value={c.community.name}>
                     <div className="flex space-x-2 hover:bg-slate-200 cursor-pointer p-1 rounded-sm">
                       <div className="relative w-6 h-6 ">
                         <Image
