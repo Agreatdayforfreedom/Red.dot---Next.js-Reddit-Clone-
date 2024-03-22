@@ -21,6 +21,8 @@ import { Input } from "@/components/ui/input";
 import { createPost, updatePost } from "@/lib/actions";
 import { Thread } from "@/types";
 
+import { InputCommunity } from "../community/input-community";
+
 export default function FormNewPost({
   userId,
   thread,
@@ -74,21 +76,7 @@ export default function FormNewPost({
         onSubmit={form.handleSubmit(onSubmit)}
         className="relative w-full px-10 space-x-1 space-y-1"
       >
-        {!thread?.id && (
-          <FormField
-            control={form.control}
-            name="communityId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Community</FormLabel>
-                <FormControl>
-                  <Input className="rounded-sm" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
+        <InputCommunity form={form} />
         <FormField
           control={form.control}
           name="title"

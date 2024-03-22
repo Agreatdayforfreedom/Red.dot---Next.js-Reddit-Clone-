@@ -13,26 +13,6 @@ import {
 import Image from "next/image";
 
 export default function HomeBanner() {
-  const user = useCurrentUser();
-  const [modal, setModal] = useState(false);
-  function onClick() {
-    setModal(true);
-  }
-
-  // if (!user) {
-  //   return (
-  //     <div className="flex justify-end my-2 p-2 border-b space-x-2">
-  //       <LoginModal
-  //         open={modal}
-  //         onClose={() => setModal(false)}
-  //         REDIRECT="/submit"
-  //       />
-  //       <ButtonCreateCommunity />
-
-  //       <Button onClick={onClick}>New Post</Button>
-  //     </div>
-  //   );
-  // }
   return (
     <Card className="rounded">
       <CardHeader className="relative h-[34px] p-0">
@@ -61,7 +41,7 @@ export default function HomeBanner() {
         </p>
       </CardContent>
       <CardFooter className="flex flex-col space-y-2 p-3">
-        <Button className="w-full rounded-full">
+        <Button className="w-full rounded-full" asChild>
           <Link href="/submit">New Post</Link>
         </Button>
         <ButtonCreateCommunity />
