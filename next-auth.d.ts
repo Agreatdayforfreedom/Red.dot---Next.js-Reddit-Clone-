@@ -4,6 +4,8 @@ export type ExtendedUser = DefaultSession["user"];
 
 declare module "next-auth" {
   interface Session {
-    user: ExtendedUser;
+    user: ExtendedUser & {
+      communities?: Join_User_Community[];
+    };
   }
 }
