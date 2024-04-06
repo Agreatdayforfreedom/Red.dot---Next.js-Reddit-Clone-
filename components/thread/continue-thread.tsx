@@ -1,19 +1,17 @@
 "use client";
 import React from "react";
 import { TiArrowRight } from "react-icons/ti";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
 import { NestedThread } from "@/types";
-import { useCommunity } from "../../store/use-community";
+import { useCommunity } from "@/store/use-community";
 
 interface Props {
   thread: NestedThread;
 }
 
 export const ContinueThread = ({ thread }: Props) => {
-  const pathname = usePathname();
-  const router = useRouter();
+  const params = useParams();
   const community = useCommunity((state) => state.community);
 
   if (!community) return;
@@ -21,7 +19,9 @@ export const ContinueThread = ({ thread }: Props) => {
     return (
       <div className="w-fit px-12 py-2 mt-4">
         <div
-          onClick={() => router.push(pathname + "/" + thread.id)}
+          onClick={() =>
+            (window.location.href = `/r/${params.slug}/thread/${params.id}/${thread.id}`)
+          }
           style={{ color: community.interactive_elements_color }}
           className="flex items-center text-sm font-semibold hover:translate-x-2 transition-all cursor-pointer"
         >
