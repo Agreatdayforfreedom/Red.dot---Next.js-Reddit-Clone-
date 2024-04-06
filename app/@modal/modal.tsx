@@ -44,7 +44,7 @@ export default function Modal({
           className="flex justify-center max-h-screen my-0 overflow-y-auto no-scrollbar"
         >
           <CustomScrollBar modalRef={ref} community={community} />
-          <div className="w-4/5 flex justify-center mt-5 items-center">
+          <div className="w-4/5 flex justify-center mt-5 items-center h-full">
             {children}
           </div>
         </div>

@@ -29,8 +29,8 @@ export default async function Page({
       }}
     >
       <HeaderCommunity asPost community={community} />
-      <div className="flex w-4/5 mt-5 rounded">
-        <div className="md:w-4/6">
+      <div className="flex w-11/12 lg:w-4/5 mt-5 rounded">
+        <div className="w-full">
           <ThreadSection
             username={user?.name || ""}
             thread={thread}
@@ -38,7 +38,7 @@ export default async function Page({
           />
         </div>
         {community && (
-          <aside className="flex-1">
+          <aside className="flex-1 hidden lg:block ml-4">
             <CommunityInfo community={community} />
           </aside>
         )}

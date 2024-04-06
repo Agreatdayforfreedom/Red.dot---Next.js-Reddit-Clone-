@@ -18,8 +18,8 @@ export default async function Page({
 
   if (!community) return null;
   return (
-    <div
-      className="flex flex-col min-h-screen items-center"
+    <section
+      className="pb-5 h-full min-w-[560px] bg-white flex flex-col"
       style={{
         background: community.background_image
           ? `url(${community.background_image})`
@@ -27,8 +27,8 @@ export default async function Page({
       }}
     >
       <HeaderCommunity asPost community={community} />
-      <div className="flex w-4/5 mt-5 rounded h-screen mb-10  ">
-        <div className="md:w-4/6 bg-white">
+      <div className="flex w-11/12  mt-5 mx-auto rounded">
+        <div className="w-full bg-white pb-10">
           <div className=" py-4 flex justify-between items-center  mx-auto w-[90%]">
             <TbMenuDeep className="size-6 relative stroke-slate-500" />
             <span className="flex-1 h-px bg-slate-200 mx-2"></span>
@@ -42,11 +42,11 @@ export default async function Page({
           <SetCommunity community={community} thread={thread} />
         </div>
         {community && (
-          <aside className="flex-1">
+          <aside className=" hidden lg:block ml-4">
             <CommunityInfo community={community} />
           </aside>
         )}
       </div>
-    </div>
+    </section>
   );
 }

@@ -34,7 +34,7 @@ export default function ThreadSection({
   if (!isLoading) return null;
   return (
     <SessionProvider>
-      <section className="pb-5 h-full w-full bg-white flex flex-col">
+      <section className="pb-5 h-full min-w-[560px] w-full bg-white flex flex-col">
         <ThreadCard thread={thread} isFirstAncestor />
         <ThreadForm
           threadId={params.id as string}

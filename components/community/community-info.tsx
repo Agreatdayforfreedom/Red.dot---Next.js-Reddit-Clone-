@@ -39,10 +39,7 @@ export default function CommunityInfo({ community, className = "" }: Props) {
     bgHeader = { backgroundImage: `url(${community.header_image})` };
   return (
     <Card
-      className={cn(
-        "hidden md:block rounded-md w-5/6 mx-auto mt-10",
-        className
-      )}
+      className={cn("hidden lg:block rounded-md w-64 mx-auto mt-10", className)}
     >
       <CardHeader className=" rounded-t-md py-4 bg-cover" style={bgHeader}>
         <CardTitle
