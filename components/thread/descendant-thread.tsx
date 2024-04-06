@@ -1,6 +1,6 @@
 import { NestedThread } from "@/types";
 import DescendantCard from "@/components/thread/descendant-card";
-import { User } from "@prisma/client";
+import { ContinueThread } from "./continue-thread";
 interface Props {
   thread: NestedThread[];
 }
@@ -15,6 +15,7 @@ export default function DescendantThread({ thread }: Props) {
         return (
           <div className="relative bg-white pt-1" key={t.id}>
             <DescendantCard thread={t} />
+            <ContinueThread thread={t} />
           </div>
         );
       })}

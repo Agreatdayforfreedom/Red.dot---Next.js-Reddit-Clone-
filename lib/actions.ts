@@ -163,10 +163,17 @@ export async function getThread(id: string) {
         type
        FROM votes v WHERE v."threadId" = t.id AND v."userId" = ${Prisma.raw(
          `'${user?.id}'`
-       )}) AS voted
+       )}) AS voted,
+       CASE WHEN EXISTS(
+     SELECT 1 FROM thread tt WHERE tt.node_path ~ ((ltree2text(t.node_path)) || '.*{1,2}')::lquery
+  ) THEN 1 ELSE 0 END as haschildren 
       FROM thread t 
       LEFT JOIN "user" AS u ON u.id = t."userId"
-      WHERE t.node_path <@ ${Prisma.raw(`'${id}'`)} GROUP BY t.id, u.id;`;
+      WHERE  t.node_path ~ (ltree2text(${Prisma.raw(
+        `'${id}'`
+      )}) || '.*{,10}')::lquery GROUP BY t.id, u.id;
+      `;
+  // WHERE t.node_path <@ ${Prisma.raw(`'${id}'`)} GROUP BY t.id, u.id;`;
   return formatRaw(raw);
 }
 

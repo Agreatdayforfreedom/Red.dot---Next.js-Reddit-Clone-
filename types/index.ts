@@ -16,6 +16,7 @@ export type MissingKeys = {
   totalcomments?: number;
   community_name?: string;
   community_avatar?: string;
+  haschildren: number;
 };
 
 /**
