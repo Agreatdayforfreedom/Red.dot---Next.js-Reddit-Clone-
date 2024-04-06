@@ -34,7 +34,7 @@ export default function ThreadSection({
   if (!isLoading) return null;
   return (
     <SessionProvider>
-      <section className="pb-5 h-full min-w-[560px] w-full bg-white flex flex-col">
+      <section className="pb-5 min-h-screen h-full min-w-[560px] w-full bg-white flex flex-col">
         <ThreadCard thread={thread} isFirstAncestor />
         <ThreadForm
           threadId={params.id as string}
@@ -54,7 +54,7 @@ export default function ThreadSection({
         />
 
         {thread?.children === undefined ? (
-          <div className="w-full  text-center">
+          <div className="w-full text-center">
             <p className="font-semibold text-2xl text-slate-700">
               No comments yet
             </p>

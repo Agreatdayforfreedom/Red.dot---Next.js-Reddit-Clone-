@@ -19,7 +19,7 @@ export default async function Page({
   if (!community) return null;
   return (
     <section
-      className="pb-5 h-full min-w-[560px] bg-white flex flex-col"
+      className="pb-5 h-full min-h-screen min-w-[560px] bg-white flex flex-col"
       style={{
         background: community.background_image
           ? `url(${community.background_image})`
