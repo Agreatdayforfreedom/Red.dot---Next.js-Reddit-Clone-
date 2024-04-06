@@ -1,12 +1,14 @@
 import type { MissingKeys, NestedThread, RawThread, Thread } from "../types";
 import { rawUserPrefix } from "./prefix";
 
-export function formatRaw(raw: RawThread[]): NestedThread[] {
+export function formatRaw(
+  raw: RawThread[],
+  parent_id: string | null = null
+): NestedThread[] {
   let withUser = raw.map((obj: RawThread) => {
     return _formatRaw(obj);
   });
-
-  return pushAsChild(withUser, [], null);
+  return pushAsChild(withUser, [], parent_id);
 }
 
 function _formatRaw(obj: RawThread) {
@@ -45,6 +47,5 @@ function pushAsChild(
       pushAsChild(arr, obj.children, t.id);
     }
   }
-
   return end;
 }

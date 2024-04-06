@@ -9,8 +9,6 @@ import ThreadLine from "@/components/thread/threadline";
 import ThreadHeader from "@/components/thread/thread-header";
 import { Card } from "@/components/ui/card";
 import ThreadActions from "@/components/thread/thread-actions";
-import ThreadForm from "@/components/thread/thread-form";
-import { useParams, usePathname } from "next/navigation";
 
 interface Props {
   thread: NestedThread;

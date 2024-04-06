@@ -1,9 +1,11 @@
 import { NestedThread } from "@/types";
 import DescendantCard from "@/components/thread/descendant-card";
 import { ContinueThread } from "./continue-thread";
+
 interface Props {
   thread: NestedThread[];
 }
+
 export default function DescendantThread({ thread }: Props) {
   if (thread.length === 0) {
     return;

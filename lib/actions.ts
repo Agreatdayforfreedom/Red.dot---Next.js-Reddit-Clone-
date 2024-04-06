@@ -169,12 +169,13 @@ export async function getThread(id: string) {
   ) THEN 1 ELSE 0 END as haschildren 
       FROM thread t 
       LEFT JOIN "user" AS u ON u.id = t."userId"
-      WHERE  t.node_path ~ (ltree2text(${Prisma.raw(
+      WHERE  t.node_path ~ ('*.' || ltree2text(${Prisma.raw(
         `'${id}'`
       )}) || '.*{,10}')::lquery GROUP BY t.id, u.id;
       `;
   // WHERE t.node_path <@ ${Prisma.raw(`'${id}'`)} GROUP BY t.id, u.id;`;
-  return formatRaw(raw);
+
+  return formatRaw(raw, raw[0].parent_id);
 }
 
 export async function newSubThread(
