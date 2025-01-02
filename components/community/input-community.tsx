@@ -63,22 +63,41 @@ export const InputCommunity = ({ form }: Props) => {
               </div>
             </FormControl>
             <SelectContent className="p-2 space-y-2">
-              {user.communities?.map(
-                (c: Join_User_Community & { community: Community }) => (
-                  <SelectItem key={c.community.id} value={c.community.name}>
-                    <div className="flex space-x-2 hover:bg-slate-200 cursor-pointer p-1 rounded-sm">
-                      <div className="relative w-6 h-6 ">
-                        <Image
-                          fill
-                          className="rounded-full"
-                          src={c.community.avatar!}
-                          alt="community avatar"
-                        />
+              {user.communities && user.communities.length > 0 ? (
+                user.communities.map(
+                  (c: Join_User_Community & { community: Community }) => (
+                    <SelectItem key={c.community.id} value={c.community.name}>
+                      <div className="flex space-x-2 hover:bg-slate-200 cursor-pointer p-1 rounded-sm">
+                        <div className="relative w-6 h-6 ">
+                          {c.community.avatar ? (
+                            <Image
+                              fill
+                              className="rounded-full"
+                              src={c.community.avatar}
+                              alt="community avatar"
+                            />
+                          ) : (
+                            <div
+                              className="size-full rounded-full"
+                              style={{
+                                background: c.community.background_color,
+                              }}
+                            />
+                          )}
+                        </div>
+                        <p>{c.community.name}</p>
                       </div>
-                      <p>{c.community.name}</p>
-                    </div>
-                  </SelectItem>
+                    </SelectItem>
+                  )
                 )
+              ) : (
+                <SelectItem
+                  value="null"
+                  className="text-xl font-semibold"
+                  disabled
+                >
+                  Join a community to post something!
+                </SelectItem>
               )}
             </SelectContent>
           </Select>

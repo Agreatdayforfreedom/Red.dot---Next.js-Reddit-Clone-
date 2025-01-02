@@ -1,4 +1,11 @@
-import React, { MouseEvent, useOptimistic, useTransition } from "react";
+import React, {
+  MouseEvent,
+  useOptimistic,
+  useState,
+  useTransition,
+} from "react";
+import { usePathname } from "next/navigation";
+
 import { cn } from "@/lib/utils";
 import axios from "axios";
 import { Thread, VoteType } from "@/types";
@@ -8,6 +15,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import LoginModal from "@/components/auth/login-modal";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 interface Props {
   thread: Thread;
@@ -20,6 +29,10 @@ export default function VoteAction({
   preview,
   isFirstAncestor,
 }: Props) {
+  const user = useCurrentUser();
+  const pathname = usePathname();
+  const [loginModal, setLoginModal] = useState(false);
+
   const [isPending, startTransition] = useTransition();
   const [thread, optimisticValue] = useOptimistic(
     self,
@@ -51,6 +64,10 @@ export default function VoteAction({
   function handleClick(e: MouseEvent<HTMLButtonElement>, type: "UP" | "DOWN") {
     e.stopPropagation();
     if (isPending) return;
+    if (!user?.id) {
+      setLoginModal(true);
+      return;
+    }
     startTransition(async () => {
       optimisticValue(type);
       await axios.patch(`/api/r/thread/${thread.id}/vote`, {
@@ -133,6 +150,13 @@ export default function VoteAction({
           <path d="M15 4v8h3.586a1 1 0 0 1 .707 1.707l-6.586 6.586a1 1 0 0 1 -1.414 0l-6.586 -6.586a1 1 0 0 1 .707 -1.707h3.586v-8a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1z" />
         </svg>
       </button>
+      {loginModal && (
+        <LoginModal
+          open={loginModal}
+          onClose={() => setLoginModal(false)}
+          REDIRECT={pathname}
+        />
+      )}
     </div>
   );
 }
