@@ -10,6 +10,10 @@ export default async function Page({ params }: { params: { id: string } }) {
   if (!thread) {
     return redirect("/");
   }
+  //TODO: Validate this on middleware
+  if (thread.userId !== session?.user.id) {
+    return redirect("/");
+  }
   return (
     <div className="h-full w-full flex flex-col items-center">
       <div className="w-full text-start mt-2 my-5 p-10">

@@ -9,10 +9,11 @@ import {
   t_expression,
   r_expression,
 } from "@/routes";
+import { getNullThread } from "./lib/actions";
 
 const { auth } = NextAuth(authConfig);
 
-export default auth((req) => {
+export default auth(async (req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
   const isPublicRoute = publicRoutes.some((p) => {
@@ -35,6 +36,17 @@ export default auth((req) => {
 
   if (nextUrl.pathname.startsWith("/img")) {
     return null;
+  }
+
+  if (nextUrl.pathname.endsWith("/edit") && !isLoggedIn) {
+    // if pathname is a valid expression (a valid thread url), redirect to the post, else, to home
+    if (nextUrl.pathname.match(t_expression)) {
+      return Response.redirect(
+        new URL(nextUrl.pathname.split("/edit")[0], nextUrl)
+      );
+    } else {
+      return Response.redirect(new URL("/", nextUrl));
+    }
   }
 
   if (isApiRoute) {

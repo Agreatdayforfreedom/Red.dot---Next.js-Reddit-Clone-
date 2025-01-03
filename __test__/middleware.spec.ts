@@ -5,6 +5,7 @@ describe("public routes", () => {
   const thread_case1 = "/r/[slug]/thread/nawdoidawnoidaw";
   const thread_case2 = "/r/[slug]/thread/n";
   const thread_case3 = "/r/[slug]/thread/newdjawlkdjawk";
+  const thread_case4 = "/r/[slug]/thread/newdjawlkdjawk/12949302";
 
   it("should pass / path", () => {
     const exp = publicRoutes.includes(index);
@@ -41,23 +42,16 @@ describe("public routes", () => {
     expect(thread_case1).toMatch(t_expression);
     expect(thread_case2).toMatch(t_expression);
     expect(thread_case3).toMatch(t_expression);
+    expect(thread_case4).toMatch(t_expression);
   });
 });
 
 describe("private routes", () => {
   const new_thread = "/submit";
-  const edit_thread = "/r/[slug]/thread/randomid/edit";
   it("path /submit should not pass regex", () => {
     const match = new_thread.match(t_expression);
     const exp = match ? match[0] === new_thread : null;
 
-    expect(exp).toBeFalsy();
-  });
-
-  it("path /r/[slug]/thread/randomid/edit should now pass regex", () => {
-    const match = edit_thread.match(t_expression);
-
-    const exp = match ? match[0] === edit_thread : null;
     expect(exp).toBeFalsy();
   });
 });

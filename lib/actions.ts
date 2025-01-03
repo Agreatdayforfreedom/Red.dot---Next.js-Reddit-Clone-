@@ -11,7 +11,7 @@ import { $assingRawUser, formatRaw } from "./format-raw";
 import { Community, Prisma } from "@prisma/client";
 import { ThreadChildSchema, ThreadSchema } from "../schemas/thread";
 import { revalidatePath, revalidateTag } from "next/cache";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import currentUser from "./currentUser";
 
 export async function login(
@@ -174,8 +174,11 @@ export async function getThread(id: string) {
       )}) || '.*{,10}')::lquery GROUP BY t.id, u.id;
       `;
   // WHERE t.node_path <@ ${Prisma.raw(`'${id}'`)} GROUP BY t.id, u.id;`;
-
-  return formatRaw(raw, raw[0].parent_id);
+  if (raw.length === 0 || !raw) {
+    return [];
+  } else {
+    return formatRaw(raw, raw[0].parent_id);
+  }
 }
 
 export async function newSubThread(
