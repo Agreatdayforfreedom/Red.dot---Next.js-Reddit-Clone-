@@ -14,7 +14,7 @@ export default function ThreadHeader({ username, created_at }: Props) {
       </p>
       <span className="text-slate-500 px-1"> &#183; </span>
       <p className="text-slate-500 font-light leading-4">
-        {moment(created_at, "YYYYMMDD").fromNow()}
+        {moment(new Date(created_at), "YYYYMMDD").fromNow()}
       </p>
     </div>
   );

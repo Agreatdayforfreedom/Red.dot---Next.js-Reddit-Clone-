@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    await db.thread.create({
+    const created = await db.thread.create({
       data: {
         content,
         title: title ? title : null,
@@ -26,7 +26,10 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return new NextResponse("Created", { status: 201 });
+    return NextResponse.json(
+      { data: { ...created, user: { ...user } } },
+      { status: 201 }
+    );
   } catch (error) {
     console.log(error);
   }

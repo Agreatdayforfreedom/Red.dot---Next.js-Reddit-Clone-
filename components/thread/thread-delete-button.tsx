@@ -7,13 +7,22 @@ import { useTransition } from "react";
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { useIntercept } from "@/store/use-intercept";
 import axios from "axios";
+import { NestedThread } from "../../types";
 
 interface Props {
   closePopover: () => void;
   id: string;
+  optimisticUpdate: (
+    type: "UPDATE" | "CREATE" | "DELETE",
+    data: Partial<NestedThread> | null
+  ) => void;
 }
 
-export default function ThreadDeleteButton({ id, closePopover }: Props) {
+export default function ThreadDeleteButton({
+  id,
+  closePopover,
+  optimisticUpdate,
+}: Props) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const user = useCurrentUser();
@@ -24,8 +33,8 @@ export default function ThreadDeleteButton({ id, closePopover }: Props) {
     startTransition(async () => {
       if (user?.id) {
         if (intercepted) {
+          optimisticUpdate("DELETE", null);
           await axios.delete(`/api/r/thread/${id}`);
-          router.refresh();
         } else {
           await deleteThread(user.id, id);
         }

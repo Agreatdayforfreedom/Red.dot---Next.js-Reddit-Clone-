@@ -22,9 +22,14 @@ import { useRouter } from "next/navigation";
 import { useIntercept } from "@/store/use-intercept";
 import axios from "axios";
 import CommunityButton from "@/components/community/button-community";
+import { NestedThread } from "../../types";
 
 interface Props {
   threadId: string;
+  optimisticUpdate?: (
+    type: "UPDATE" | "CREATE" | "DELETE",
+    data: Partial<NestedThread> | null
+  ) => void;
   label?: string | ReactNode[];
   openable?: boolean;
   content?: string;
@@ -33,6 +38,7 @@ interface Props {
 
 export default function ThreadForm({
   threadId,
+  optimisticUpdate,
   content,
   label,
   openable = false,
@@ -59,16 +65,18 @@ export default function ThreadForm({
       if (user?.id)
         if (content) {
           //! UPDATE
-          if (values.content === content) {
-            return console.log("lol change the content");
-          }
 
           if (intercepted) {
+            if (optimisticUpdate) {
+              optimisticUpdate("UPDATE", {
+                content: values.content,
+                title: null,
+              });
+            }
             await axios.put(`/api/r/thread/${threadId}/edit`, {
               content: values.content,
               title: null,
             });
-            router.refresh();
           } else {
             await updateSubThread(
               {
@@ -82,12 +90,14 @@ export default function ThreadForm({
         } else {
           //! CREATE
           if (intercepted) {
-            await axios.post("/api/r/thread/create", {
+            const { data } = await axios.post("/api/r/thread/create", {
               title: null,
               content: values.content,
               parent_id: threadId,
             });
-            router.refresh();
+
+            if (optimisticUpdate) optimisticUpdate("CREATE", data.data);
+            // router.refresh();
           } else {
             await newSubThread(
               {

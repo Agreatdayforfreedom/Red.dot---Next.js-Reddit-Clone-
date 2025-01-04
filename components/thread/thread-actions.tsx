@@ -1,6 +1,8 @@
 "use client";
+
+import React, { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { Thread } from "@/types";
+import { NestedThread, Thread } from "@/types";
 import ThreadDeleteButton from "@/components/thread/thread-delete-button";
 import {
   Popover,
@@ -10,7 +12,6 @@ import {
 import ThreadUpdateButtom from "@/components/thread/thread-update-button";
 import ShareButton from "@/components/thread/share-button";
 import useCurrentUser from "@/hooks/useCurrentUser";
-import React, { useState } from "react";
 import LoginModal from "@/components/auth/login-modal";
 import { usePathname } from "next/navigation";
 import ThreadForm from "./thread-form";
@@ -21,19 +22,23 @@ import VoteAction from "@/components/thread/actions/vote-action";
 interface Props {
   onReply?: (type: any) => void;
   thread: Thread;
+  optimisticUpdate: (
+    type: "UPDATE" | "CREATE" | "DELETE",
+    data: Partial<NestedThread> | null
+  ) => void;
   isFirstAncestor?: boolean;
   preview?: boolean;
 }
 
 export default function ThreadActions({
   thread,
+  optimisticUpdate,
   isFirstAncestor = false,
   preview = false,
 }: Props) {
   const [modal, setModal] = useState(false);
   const [popover, setPopover] = useState(false);
   const [openReply, setOpenReply] = useState(false);
-
   const [type, setType] = useState<"UPDATE" | "CREATE">("CREATE");
 
   const user = useCurrentUser();
@@ -46,7 +51,6 @@ export default function ThreadActions({
     if (type) setType(type);
     setOpenReply(!openReply);
   }
-
   const onClick = (type: any) => {
     if (user) {
       onReply(type);
@@ -101,6 +105,7 @@ export default function ThreadActions({
                 <ThreadDeleteButton
                   id={thread.id}
                   closePopover={() => setPopover(false)}
+                  optimisticUpdate={optimisticUpdate}
                 />
               </>
             </PopoverContent>
@@ -110,6 +115,7 @@ export default function ThreadActions({
       {openReply && (
         <ThreadForm
           threadId={thread.id}
+          optimisticUpdate={optimisticUpdate}
           content={type === "UPDATE" ? thread.content : ""}
           onReply={onReply} //close when create
           openable

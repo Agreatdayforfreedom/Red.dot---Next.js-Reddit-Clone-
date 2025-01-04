@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useOptimistic, useRef, useState } from "react";
 import { BiExpandVertical } from "react-icons/bi";
 
 import DescendantThread from "@/components/thread/descendant-thread";
@@ -14,7 +14,8 @@ interface Props {
   thread: NestedThread;
 }
 
-export default function DescendantCard({ thread }: Props) {
+export default function DescendantCard({ thread: self }: Props) {
+  const [threadProxy, setThreadProxy] = useState(self);
   const [collapse, setCollapse] = useState(false);
 
   const ref = useRef<HTMLDivElement>(null);
@@ -25,7 +26,48 @@ export default function DescendantCard({ thread }: Props) {
     }
   }, [ref]);
 
-  //TODO:
+  const [thread, optimisticValue] = useOptimistic(
+    threadProxy,
+    (
+      current,
+      action: {
+        type: "UPDATE" | "CREATE" | "DELETE";
+        data: Partial<NestedThread> | null;
+      }
+    ) => {
+      if (action.type === "DELETE") {
+        current.deleted = true;
+      }
+
+      if (action.type === "UPDATE") {
+        current = {
+          ...current,
+          ...action.data,
+        };
+      }
+
+      return { ...current };
+    }
+  );
+
+  const optimisticUpdate = (
+    type: "UPDATE" | "CREATE" | "DELETE",
+    data: Partial<NestedThread> | null
+  ) => {
+    if (type === "CREATE") {
+      setThreadProxy((prev) => ({
+        ...prev,
+        children: [
+          {
+            ...(data as NestedThread),
+            children: [],
+          },
+        ],
+      }));
+    } else {
+      optimisticValue({ type, data });
+    }
+  };
 
   return (
     <Card className="p-0 border-none shadow-none">
@@ -63,7 +105,10 @@ export default function DescendantCard({ thread }: Props) {
               ) : (
                 <p className="break-all text-sm p-2">{thread.content}</p>
               )}
-              <ThreadActions thread={thread} />
+              <ThreadActions
+                thread={thread}
+                optimisticUpdate={optimisticUpdate}
+              />
             </div>
           )}
         </div>
