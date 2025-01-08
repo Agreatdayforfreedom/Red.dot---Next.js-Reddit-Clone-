@@ -9,6 +9,7 @@ import ThreadLine from "@/components/thread/threadline";
 import ThreadHeader from "@/components/thread/thread-header";
 import { Card } from "@/components/ui/card";
 import ThreadActions from "@/components/thread/thread-actions";
+import { useIntercept } from "../../store/use-intercept";
 
 interface Props {
   thread: NestedThread;
@@ -17,6 +18,15 @@ interface Props {
 export default function DescendantCard({ thread: self }: Props) {
   const [threadProxy, setThreadProxy] = useState(self);
   const [collapse, setCollapse] = useState(false);
+  const intercepted = useIntercept((state) => state.intercepted);
+
+  // sync revalidation
+  useEffect(() => {
+    // on parallel routes do not need to revalidate
+    if (!intercepted) {
+      setThreadProxy(self);
+    }
+  }, [self]);
 
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -46,7 +56,7 @@ export default function DescendantCard({ thread: self }: Props) {
         };
       }
 
-      return { ...current };
+      return current;
     }
   );
 
@@ -58,6 +68,7 @@ export default function DescendantCard({ thread: self }: Props) {
       setThreadProxy((prev) => ({
         ...prev,
         children: [
+          ...prev.children,
           {
             ...(data as NestedThread),
             children: [],
@@ -66,6 +77,10 @@ export default function DescendantCard({ thread: self }: Props) {
       }));
     } else {
       optimisticValue({ type, data });
+      setThreadProxy((prev) => ({
+        ...prev,
+        ...data,
+      }));
     }
   };
 

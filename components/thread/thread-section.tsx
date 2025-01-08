@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Community, User } from "@prisma/client";
 import { useParams } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
@@ -19,11 +19,13 @@ interface Props {
 }
 
 export default function ThreadSection({
-  thread,
+  thread: self,
   community,
   intercepted = false,
   username,
 }: Props) {
+  const [thread, setThreadProxy] = useState(self);
+
   const params = useParams<{ id: string }>();
   const { intercept } = useIntercept();
   const { setCommunity, community: isLoading } = useCommunity();
@@ -31,13 +33,41 @@ export default function ThreadSection({
     intercept(intercepted);
     if (community) setCommunity(community);
   }, []);
+
+  // sync revalidation on parent (first ancestor)
+  useEffect(() => {
+    // on parallel routes do not need to revalidate
+    if (!intercepted) {
+      setThreadProxy(self);
+    }
+  }, [self]);
+
   if (!isLoading) return null;
+  function optimisticUpdate(
+    type: "UPDATE" | "CREATE" | "DELETE",
+    data: Partial<NestedThread> | null
+  ) {
+    if (type === "CREATE") {
+      setThreadProxy((prev) => ({
+        ...prev,
+        children: [
+          ...prev.children,
+          {
+            ...(data as NestedThread),
+            children: [],
+          },
+        ],
+      }));
+    }
+  }
+
   return (
     <SessionProvider>
       <section className="pb-5 min-h-screen h-full min-w-[560px] w-full bg-white flex flex-col">
         <ThreadCard thread={thread} isFirstAncestor />
         <ThreadForm
           threadId={params.id as string}
+          optimisticUpdate={optimisticUpdate}
           label={
             username && [
               <p key={1}>

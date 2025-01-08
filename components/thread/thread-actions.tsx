@@ -22,7 +22,7 @@ import VoteAction from "@/components/thread/actions/vote-action";
 interface Props {
   onReply?: (type: any) => void;
   thread: Thread;
-  optimisticUpdate: (
+  optimisticUpdate?: (
     type: "UPDATE" | "CREATE" | "DELETE",
     data: Partial<NestedThread> | null
   ) => void;

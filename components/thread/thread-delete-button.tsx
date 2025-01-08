@@ -12,7 +12,7 @@ import { NestedThread } from "../../types";
 interface Props {
   closePopover: () => void;
   id: string;
-  optimisticUpdate: (
+  optimisticUpdate?: (
     type: "UPDATE" | "CREATE" | "DELETE",
     data: Partial<NestedThread> | null
   ) => void;
@@ -33,7 +33,7 @@ export default function ThreadDeleteButton({
     startTransition(async () => {
       if (user?.id) {
         if (intercepted) {
-          optimisticUpdate("DELETE", null);
+          if (optimisticUpdate) optimisticUpdate("DELETE", null);
           await axios.delete(`/api/r/thread/${id}`);
         } else {
           await deleteThread(user.id, id);
